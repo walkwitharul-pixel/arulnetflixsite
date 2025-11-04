@@ -208,6 +208,10 @@ h6 {
 .name-letter {
   display: inline-block;
   position: relative;
+  /* Inherit font properties from parent */
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
   /* Color will be controlled by framer-motion */
   text-shadow: 0 0 0 rgba(255, 255, 255, 0);
   will-change: transform, opacity, color, text-shadow;

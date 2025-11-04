@@ -36,7 +36,6 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Home", path: activeProfile ? `/profile/${activeProfile}` : "/profile/recruiter" },
-    { name: "About Me", path: "/about" },
     { name: "Ventures", path: "/projects" },
     { name: "Skills", path: "/skills" },
     { name: "Experience", path: "/work-experience" },
@@ -83,11 +82,10 @@ export default function Navbar() {
 
       <nav
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-          scrolled ? "bg-netflix-black shadow-lg" : "bg-gradient-to-b from-black/80 to-transparent"
+          scrolled ? "bg-[#141414] shadow-lg" : "bg-gradient-to-b from-black/80 to-transparent"
         }`}
         role="navigation"
         aria-label="Main navigation"
-        style={{ backgroundColor: scrolled ? profileTheme.secondary : undefined }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -98,24 +96,20 @@ export default function Navbar() {
                 aria-label="Go to homepage"
               >
                 <div className="h-8 w-auto relative">
-                  {/* Use a text logo with your name */}
-                  <div className="text-2xl font-bold" style={{ color: profileColor }}>
-                    ARUL MURUGAN
+                  {/* Netflix-style logo */}
+                  <div className="text-3xl font-bold text-red-600 tracking-tight">
+                    NETFLIX
                   </div>
                 </div>
               </Link>
-              <div className="hidden md:ml-10 md:flex md:space-x-8">
+              <div className="hidden md:ml-10 md:flex md:space-x-6">
                 {navLinks.map((link) => (
                   <Link
                     key={link.name}
                     href={link.path}
                     className={`inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300 ${
-                      pathname === link.path ? "text-white border-b-2" : "text-gray-300 hover:text-white"
+                      pathname === link.path ? "text-white font-semibold" : "text-gray-300 hover:text-white"
                     }`}
-                    style={{
-                      borderColor: pathname === link.path ? profileColor : undefined,
-                      color: pathname === link.path ? profileColor : undefined,
-                    }}
                     aria-current={pathname === link.path ? "page" : undefined}
                   >
                     {link.name}
@@ -124,17 +118,19 @@ export default function Navbar() {
               </div>
             </div>
 
-            <div className="hidden md:flex items-center space-x-4">
-              <ModeToggle />
+            <div className="hidden md:flex items-center space-x-6">
               <button
                 className="text-gray-300 hover:text-white transition-colors"
                 onClick={() => setSearchOpen(true)}
                 aria-label="Search"
               >
-                <FaSearch className="h-5 w-5" />
+                <FaSearch className="h-6 w-6" />
               </button>
-              <button className="text-gray-300 hover:text-white transition-colors" aria-label="Notifications">
-                <FaBell className="h-5 w-5" />
+              <button className="text-gray-300 hover:text-white transition-colors relative" aria-label="Notifications">
+                <FaBell className="h-6 w-6" />
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  5
+                </span>
               </button>
               <div className="relative">
                 <button
@@ -142,10 +138,10 @@ export default function Navbar() {
                   aria-label="Profile menu"
                 >
                   <div
-                    className="w-8 h-8 relative rounded-md overflow-hidden flex items-center justify-center"
+                    className="w-8 h-8 relative rounded overflow-hidden flex items-center justify-center border-2 border-white"
                     style={{ backgroundColor: profileColor }}
                   >
-                    <span className="text-white font-bold">A</span>
+                    <span className="text-white font-bold text-sm">A</span>
                   </div>
                   <svg
                     className="w-4 h-4 ml-1"

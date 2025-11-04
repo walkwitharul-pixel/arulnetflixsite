@@ -3,7 +3,8 @@
 import { useEffect, useState, useRef } from "react"
 import { useParams } from "next/navigation"
 import Navbar from "@/components/navbar"
-import ProfileBanner from "@/components/profile-banner"
+import NetflixHero from "@/components/netflix-hero"
+import ContentRow from "@/components/content-row"
 import InteractiveTimeline from "@/components/interactive-timeline"
 import CaseStudiesCarousel from "@/components/case-studies-carousel"
 import ClientLogos from "@/components/client-logos"
@@ -13,7 +14,6 @@ import NewsletterSignup from "@/components/newsletter-signup"
 import { profileData } from "@/lib/profile-data"
 import { timelineData } from "@/lib/timeline-data"
 import { skillsData } from "@/lib/skills-data"
-import ResponsiveImage from "@/components/responsive-image"
 import { useProfile } from "@/context/profile-context"
 import { motion } from "framer-motion"
 
@@ -437,51 +437,60 @@ export default function ProfilePage() {
     )
   }
 
+  // Convert case studies and other content to Netflix-style rows
+  const netflixContentRows = [
+    {
+      title: "Featured Ventures",
+      items: caseStudies.map((study) => ({
+        id: study.id,
+        title: study.title,
+        image: study.image,
+        link: study.link,
+        badge: study.id === "onestopsg-seo" ? "TOP 10" : undefined,
+      })),
+    },
+    {
+      title: "Career Journey",
+      items: careerTimelineItems.slice(0, 6).map((item) => ({
+        id: item.id,
+        title: item.title,
+        image: item.image,
+      })),
+    },
+    {
+      title: "Skills & Expertise",
+      items: topSkills.map((skill) => ({
+        id: skill.name.toLowerCase(),
+        title: skill.name,
+        image: `/placeholder.svg?height=180&width=320&text=${encodeURIComponent(skill.name)}`,
+      })),
+    },
+  ]
+
   return (
     <>
       <Navbar />
-      <main id="main-content">
-        <div
-          className="profile-page relative min-h-[75vh] flex items-center"
-          aria-label={`${validProfileName} profile view`}
-          style={{ backgroundColor: profileTheme.background }}
-        >
-          <div className="absolute inset-0 z-0">
-            {backgroundGif && !backgroundImageError ? (
-              <ResponsiveImage
-                src={backgroundGif}
-                alt="Profile background"
-                fill
-                className="object-cover"
-                priority
-                sizes="100vw"
-                quality={90}
-                fallbackText="Background image could not be loaded"
-                fallbackColor="bg-gray-900"
-                showErrorIcon={false}
-                containerClassName="w-full h-full"
-                onError={handleBackgroundImageError}
-              />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-black"></div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+      <main id="main-content" className="bg-black min-h-screen">
+        {/* Netflix Hero Section */}
+        <NetflixHero
+          title={currentProfileContent.title}
+          description={currentProfileContent.description}
+          backgroundImage={backgroundGif}
+          overlayText="Five kids all in one barn and no parents. Oh!"
+          rating="PG"
+          genres={["Entrepreneurship", "Technology", "Business"]}
+        />
+
+        {/* Content Rows - Netflix Style */}
+        <div className="bg-black py-8">
+          <div className="container mx-auto">
+            {netflixContentRows.map((row, index) => (
+              <ContentRow key={index} title={row.title} items={row.items} />
+            ))}
           </div>
-          <ProfileBanner />
         </div>
 
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="profile-content">
-          {/* Profile-specific welcome message */}
-          <motion.div variants={itemVariants} className="container mx-auto px-4 md:px-8 py-8 text-center">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2" style={{ color: profileTheme.primary }}>
-              {currentProfileContent.title}
-            </h1>
-            <p className="text-lg text-gray-300 max-w-3xl mx-auto">{currentProfileContent.description}</p>
-          </motion.div>
-
-          {/* Render sections in profile-specific order */}
-          {currentProfileContent.sections.map(renderSection)}
-        </motion.div>
+        {/* Additional detailed sections can go here if needed */}
 
         <motion.section variants={itemVariants} aria-labelledby="newsletter-heading">
           <h2 id="newsletter-heading" className="sr-only">

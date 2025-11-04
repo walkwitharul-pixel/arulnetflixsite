@@ -33,24 +33,31 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
     const letters: string[] = []
     let currentIndex = 0
 
-    const typingInterval = setInterval(() => {
-      if (currentIndex < allLetters.length) {
-        letters.push(allLetters[currentIndex].letter)
-        setShowLetters([...letters])
-        currentIndex++
-      } else {
-        clearInterval(typingInterval)
-        // After all letters are typed, wait a bit then play pop-out animation
-        setTimeout(() => {
-          setAllLettersVisible(true)
+    // Start typing immediately with a small initial delay
+    const initialDelay = setTimeout(() => {
+      const typingInterval = setInterval(() => {
+        if (currentIndex < allLetters.length) {
+          letters.push(allLetters[currentIndex].letter)
+          setShowLetters([...letters])
+          currentIndex++
+        } else {
+          clearInterval(typingInterval)
+          // After all letters are typed, wait a bit then play pop-out animation
           setTimeout(() => {
-            setPlayPopOut(true)
-          }, 300)
-        }, 500)
-      }
-    }, 150) // Typing speed: 150ms per letter
+            setAllLettersVisible(true)
+            setTimeout(() => {
+              setPlayPopOut(true)
+            }, 300)
+          }, 500)
+        }
+      }, 120) // Typing speed: 120ms per letter for smoother effect
 
-    return () => clearInterval(typingInterval)
+      return () => clearInterval(typingInterval)
+    }, 100) // Small initial delay to ensure component is mounted
+
+    return () => {
+      clearTimeout(initialDelay)
+    }
   }, [])
 
   // Trigger completion callback after pop-out animation

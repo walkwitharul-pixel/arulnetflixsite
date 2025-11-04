@@ -34,31 +34,29 @@ export default function Home() {
       hasPreloaded.current = true
     }
 
-    // Show loading animation
-    const loadingTimer = setTimeout(() => {
-      setIsLoading(false)
+    // Skip the old loader, show animated name immediately
+    setIsLoading(false)
 
-      // Play sound after loading
+    // Play sound after a short delay
+    setTimeout(() => {
       if (audioRef.current) {
         audioRef.current.play().catch((err) => {
           console.log("Audio playback prevented by browser:", err)
         })
       }
+    }, 500)
 
-      // Animate name and redirect
-      // Typing (2.5s) + pause (0.5s) + pop-out (4s) + fade (0.8s) = ~7.8s total
-      const redirectTimer = setTimeout(() => {
-        setAnimate(true)
-        setTimeout(() => {
-          router.push("/browse")
-        }, 1500)
-      }, 8000) // Wait for complete animation sequence
-
-      return () => clearTimeout(redirectTimer)
-    }, 2500)
+    // Animate name and redirect
+    // Typing (2.5s) + pause (0.5s) + pop-out (4s) + fade (0.8s) = ~7.8s total
+    const redirectTimer = setTimeout(() => {
+      setAnimate(true)
+      setTimeout(() => {
+        router.push("/browse")
+      }, 1500)
+    }, 8000) // Wait for complete animation sequence
 
     return () => {
-      clearTimeout(loadingTimer)
+      clearTimeout(redirectTimer)
       if (audioRef.current) {
         audioRef.current.pause()
         audioRef.current = null

@@ -80,7 +80,7 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
         if (onAnimationComplete) {
           onAnimationComplete()
         }
-      }, 2000) // After color change and fade completes
+      }, 1500) // After fade completes
       return () => clearTimeout(timer)
     }
   }, [playPopOut, onAnimationComplete])
@@ -122,32 +122,27 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
               }}
               initial={{
                 opacity: 0,
-                color: "rgb(255, 255, 255)",
+                color: "rgb(229, 9, 20)",
               }}
               animate={
                 playPopOut && allTyped
                   ? {
-                      // Simple: Type -> Show red -> Fade out
-                      opacity: [1, 1, 0.3, 0],
-                      color: ["rgb(255, 255, 255)", "rgb(229, 9, 20)", "rgb(229, 9, 20)", "rgb(229, 9, 20)"],
+                      // Fade out while staying red
+                      opacity: [1, 0.3, 0],
+                      color: "rgb(229, 9, 20)",
                     }
                   : {
-                      // Typing animation - letters appear one by one
+                      // Typing animation - letters appear one by one in Netflix red
                       opacity: isVisible ? 1 : 0,
-                      color: "rgb(255, 255, 255)",
+                      color: "rgb(229, 9, 20)",
                     }
               }
               transition={
                 playPopOut && allTyped
                   ? {
-                      duration: 2,
-                      times: [0, 0.3, 0.7, 1],
+                      duration: 1.5,
+                      times: [0, 0.5, 1],
                       ease: "easeInOut",
-                      // Explicitly enable color animation
-                      color: {
-                        duration: 0.5,
-                        ease: "easeInOut",
-                      },
                     }
                   : {
                       duration: 0.2,

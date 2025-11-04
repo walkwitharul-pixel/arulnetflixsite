@@ -13,13 +13,9 @@ export default function Browse() {
   const [selectedProfile, setSelectedProfile] = useState<string | null>(null)
   const [exitComplete, setExitComplete] = useState(false)
 
-  // Add loading effect
+  // Remove loading effect - show content immediately
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 2500)
-
-    return () => clearTimeout(timer)
+    setIsLoading(false)
   }, [])
 
   const handleProfileSelect = (profileName: string) => {

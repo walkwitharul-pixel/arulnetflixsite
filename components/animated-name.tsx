@@ -30,34 +30,28 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
 
   // Type out letters one by one
   useEffect(() => {
-    const letters: string[] = []
     let currentIndex = 0
+    const letters: string[] = []
 
-    // Start typing immediately with a small initial delay
-    const initialDelay = setTimeout(() => {
-      const typingInterval = setInterval(() => {
-        if (currentIndex < allLetters.length) {
-          letters.push(allLetters[currentIndex].letter)
-          setShowLetters([...letters])
-          currentIndex++
-        } else {
-          clearInterval(typingInterval)
-          // After all letters are typed, wait a bit then play pop-out animation
+    // Start typing immediately
+    const typingInterval = setInterval(() => {
+      if (currentIndex < allLetters.length) {
+        letters.push(allLetters[currentIndex].letter)
+        setShowLetters([...letters])
+        currentIndex++
+      } else {
+        clearInterval(typingInterval)
+        // After all letters are typed, wait a bit then play pop-out animation
+        setTimeout(() => {
+          setAllLettersVisible(true)
           setTimeout(() => {
-            setAllLettersVisible(true)
-            setTimeout(() => {
-              setPlayPopOut(true)
-            }, 300)
-          }, 500)
-        }
-      }, 120) // Typing speed: 120ms per letter for smoother effect
+            setPlayPopOut(true)
+          }, 300)
+        }, 600)
+      }
+    }, 100) // Typing speed: 100ms per letter
 
-      return () => clearInterval(typingInterval)
-    }, 100) // Small initial delay to ensure component is mounted
-
-    return () => {
-      clearTimeout(initialDelay)
-    }
+    return () => clearInterval(typingInterval)
   }, [])
 
   // Trigger completion callback after pop-out animation
@@ -118,7 +112,7 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
               }}
               initial={{
                 opacity: 0,
-                transform: `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1)`,
+                transform: `scaleX(1) rotateY(0deg) scaleY(1)`,
                 color: "rgb(255, 255, 255)",
               }}
               animate={
@@ -152,9 +146,9 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
                       ],
                     }
                   : {
-                      // Typing animation
+                      // Typing animation - letters appear one by one (simple, no 3D transform during typing)
                       opacity: isVisible ? 1 : 0,
-                      transform: `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1)`,
+                      transform: `scaleX(1) rotateY(0deg) scaleY(1)`,
                       color: "rgb(255, 255, 255)",
                     }
               }
@@ -167,8 +161,8 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
                       ease: [0.4, 0, 0.2, 1],
                     }
                   : {
-                      duration: 0.2,
-                      delay: typingDelay,
+                      duration: 0.3,
+                      delay: 0,
                       ease: "easeOut",
                     }
               }

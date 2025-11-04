@@ -25,7 +25,7 @@ const careerTimelineItems = timelineData
     title: `${item.title} at ${item.name}`,
     date: item.dateRange,
     description: item.summaryPoints,
-    image: `/placeholder.svg?height=160&width=280&text=${encodeURIComponent(item.name)}`,
+    image: `/images/placeholders/career/${item.name.toLowerCase().replace(/\s+/g, "-")}.jpg`, // Placeholder - replace with actual image
     type: "work" as const,
   }))
 
@@ -36,7 +36,7 @@ const educationTimelineItems = timelineData
     title: `${item.title} - ${item.name}`,
     date: item.dateRange,
     description: item.summaryPoints,
-    image: `/placeholder.svg?height=160&width=280&text=${encodeURIComponent(item.name)}`,
+    image: `/images/placeholders/education/${item.name.toLowerCase().replace(/\s+/g, "-")}.jpg`, // Placeholder - replace with actual image
     type: "education" as const,
   }))
 
@@ -47,7 +47,7 @@ const achievementTimelineItems = timelineData
     title: `${item.title}`,
     date: item.dateRange,
     description: item.summaryPoints,
-    image: `/placeholder.svg?height=160&width=280&text=${encodeURIComponent(item.name)}`,
+    image: `/images/placeholders/achievements/${item.name.toLowerCase().replace(/\s+/g, "-")}.jpg`, // Placeholder - replace with actual image
     type: "achievement" as const,
   }))
 
@@ -82,13 +82,13 @@ const journeyHighlights = [
   },
 ]
 
-// Sample case studies
+// Sample case studies with placeholder images
 const caseStudies = [
   {
     id: "onestopsg-seo",
     title: "ONESTOPSG: Digital Marketing Success",
     description: "Increased organic traffic by 150% for an e-commerce client through comprehensive digital strategy.",
-    image: "/placeholder.svg?height=180&width=320&text=Digital+Marketing+Case+Study",
+    image: "/images/placeholders/onestopsg-seo.jpg", // Placeholder - replace with actual image
     metrics: ["150% Traffic Increase", "40% Conversion Rate"],
     link: "/case-studies/onestopsg-seo",
   },
@@ -96,7 +96,7 @@ const caseStudies = [
     id: "growthlab-community",
     title: "GrowthLab: Community Building",
     description: "Built a thriving startup community with over 500 active members in Singapore.",
-    image: "/placeholder.svg?height=180&width=320&text=Community+Building+Case+Study",
+    image: "/images/placeholders/growthlab-community.jpg", // Placeholder - replace with actual image
     metrics: ["500+ Members", "20+ Events"],
     link: "/case-studies/growthlab-community",
   },
@@ -104,7 +104,7 @@ const caseStudies = [
     id: "velantec-security",
     title: "VELANTEC: Cybersecurity Solution",
     description: "Implemented robust security measures for a financial institution, preventing potential breaches.",
-    image: "/placeholder.svg?height=180&width=320&text=Cybersecurity+Case+Study",
+    image: "/images/placeholders/velantec-security.jpg", // Placeholder - replace with actual image
     metrics: ["100% Security Improvement", "Zero Breaches"],
     link: "/case-studies/velantec-security",
   },
@@ -112,7 +112,7 @@ const caseStudies = [
     id: "avalsg-ecommerce",
     title: "Aval.sg: E-commerce Growth",
     description: "Scaled e-commerce operations to handle 200+ orders per month with efficient fulfillment.",
-    image: "/placeholder.svg?height=180&width=320&text=E-commerce+Case+Study",
+    image: "/images/placeholders/avalsg-ecommerce.jpg", // Placeholder - replace with actual image
     metrics: ["200+ Monthly Orders", "95% Customer Satisfaction"],
     link: "/case-studies/avalsg-ecommerce",
   },
@@ -437,14 +437,14 @@ export default function ProfilePage() {
     )
   }
 
-  // Convert case studies and other content to content rows
+  // Convert case studies and other content to content rows with placeholder images
   const contentRows = [
     {
       title: "Featured Ventures",
       items: caseStudies.map((study) => ({
         id: study.id,
         title: study.title,
-        image: study.image,
+        image: study.image || `/images/placeholders/ventures/${study.id}.jpg`, // Fallback placeholder
         link: study.link,
         badge: study.id === "onestopsg-seo" ? "TOP 10" : undefined,
       })),
@@ -454,7 +454,7 @@ export default function ProfilePage() {
       items: careerTimelineItems.slice(0, 6).map((item) => ({
         id: item.id,
         title: item.title,
-        image: item.image,
+        image: item.image || `/images/placeholders/career/${item.id}.jpg`, // Fallback placeholder
       })),
     },
     {
@@ -462,7 +462,7 @@ export default function ProfilePage() {
       items: topSkills.map((skill) => ({
         id: skill.name.toLowerCase(),
         title: skill.name,
-        image: `/placeholder.svg?height=180&width=320&text=${encodeURIComponent(skill.name)}`,
+        image: `/images/placeholders/skills/${skill.name.toLowerCase().replace(/\s+/g, "-")}.jpg`, // Placeholder - replace with actual image
       })),
     },
   ]
@@ -482,8 +482,8 @@ export default function ProfilePage() {
         />
 
         {/* Content Rows */}
-        <div className="bg-black py-12">
-          <div className="container mx-auto">
+        <div className="bg-black py-12 md:py-16">
+          <div className="container mx-auto max-w-7xl">
             {contentRows.map((row, index) => (
               <ContentRow key={index} title={row.title} items={row.items} />
             ))}

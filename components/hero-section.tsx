@@ -48,51 +48,51 @@ export default function HeroSection({
 
       {/* Content */}
       <div className="relative z-10 h-full flex items-end">
-        <div className="container mx-auto px-4 md:px-8 pb-20 md:pb-32">
+        <div className="container mx-auto px-4 md:px-8 lg:px-12 pb-20 md:pb-32">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="max-w-3xl"
+            className="max-w-4xl"
           >
-            {/* Title - Enhanced Styling */}
-            <h1 className="text-6xl md:text-7xl lg:text-9xl font-bold text-white mb-6 drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)] leading-tight">
+            {/* Title - Enhanced Styling with proper alignment */}
+            <h1 className="text-5xl md:text-6xl lg:text-8xl font-bold text-white mb-6 drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)] leading-[1.1] tracking-tight">
               {title}
             </h1>
 
-            {/* Description - Enhanced */}
+            {/* Description - Enhanced with proper alignment */}
             {description && (
-              <p className="text-xl md:text-2xl text-white mb-8 max-w-2xl drop-shadow-lg leading-relaxed">
+              <p className="text-lg md:text-xl lg:text-2xl text-white mb-8 max-w-2xl drop-shadow-lg leading-relaxed">
                 {description}
               </p>
             )}
 
-            {/* Action Buttons - Enhanced */}
-            <div className="flex flex-wrap gap-4 mb-8">
+            {/* Action Buttons - Enhanced with proper alignment */}
+            <div className="flex flex-wrap gap-4 mb-8 items-center">
               <motion.button
-                className="bg-white text-black px-10 py-4 rounded-md flex items-center gap-3 font-bold text-lg hover:bg-gray-100 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="bg-white text-black px-8 md:px-10 py-3 md:py-4 rounded-md flex items-center gap-2 md:gap-3 font-bold text-base md:text-lg hover:bg-gray-100 transition-all duration-200 shadow-lg hover:shadow-xl min-w-[140px] justify-center"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Play size={28} fill="currentColor" />
-                Play
+                <Play size={24} className="md:w-7 md:h-7" fill="currentColor" />
+                <span>Play</span>
               </motion.button>
               <motion.button
-                className="bg-gray-600/80 text-white px-10 py-4 rounded-md flex items-center gap-3 font-semibold text-lg hover:bg-gray-600 transition-all duration-200 backdrop-blur-md border border-white/20 shadow-lg hover:shadow-xl"
+                className="bg-gray-600/80 text-white px-8 md:px-10 py-3 md:py-4 rounded-md flex items-center gap-2 md:gap-3 font-semibold text-base md:text-lg hover:bg-gray-600 transition-all duration-200 backdrop-blur-md border border-white/20 shadow-lg hover:shadow-xl min-w-[140px] justify-center"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
               >
-                <Info size={28} />
-                More Info
+                <Info size={24} className="md:w-7 md:h-7" />
+                <span>More Info</span>
               </motion.button>
             </div>
 
-            {/* Overlay Text - Enhanced */}
+            {/* Overlay Text - Enhanced with proper alignment */}
             {overlayText && (
               <motion.p
-                className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)] leading-tight"
+                className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-6 drop-shadow-[0_4px_20px_rgba(0,0,0,0.8)] leading-tight max-w-3xl"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}

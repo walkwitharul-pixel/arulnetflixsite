@@ -20,11 +20,11 @@ interface ContentRowProps {
 export default function ContentRow({ title, items }: ContentRowProps) {
   return (
     <div className="mb-10 md:mb-16">
-      <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 px-4 md:px-8 tracking-tight">
+      <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 px-4 md:px-8 lg:px-12 tracking-tight">
         {title}
       </h2>
       <div className="relative group/row">
-        <div className="flex overflow-x-auto gap-5 px-4 md:px-8 scrollbar-hide scroll-smooth pb-6">
+        <div className="flex overflow-x-auto gap-5 px-4 md:px-8 lg:px-12 scrollbar-hide scroll-smooth pb-6">
           {items.map((item, index) => (
             <motion.div
               key={item.id}

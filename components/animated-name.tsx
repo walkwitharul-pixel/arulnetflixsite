@@ -10,7 +10,6 @@ interface AnimatedNameProps {
 
 export default function AnimatedName({ name, onAnimationComplete }: AnimatedNameProps) {
   const [showLetters, setShowLetters] = useState<string[]>([])
-  const [allLettersVisible, setAllLettersVisible] = useState(false)
 
   // Split name into letters, handling spaces
   const allLetters: Array<{ letter: string; isSpace: boolean; index: number }> = []
@@ -25,8 +24,6 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
     }
   })
 
-  const totalLetters = letterIndex
-
   // Type out letters one by one
   useEffect(() => {
     let currentIndex = 0
@@ -40,9 +37,7 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
         currentIndex++
       } else {
         clearInterval(typingInterval)
-        // After all letters are typed, mark as visible and trigger completion
-        setAllLettersVisible(true)
-        // Wait a bit then trigger completion callback for fade out
+        // After all letters are typed, wait a bit then trigger completion for fade out
         setTimeout(() => {
           if (onAnimationComplete) {
             onAnimationComplete()
@@ -53,10 +48,6 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
 
     return () => clearInterval(typingInterval)
   }, [onAnimationComplete])
-
-
-  const middleIndex = Math.floor(totalLetters / 2)
-  let currentLetterIndex = 0
 
   return (
     <div className="animated-name-container">
@@ -73,11 +64,6 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
               />
             )
           }
-
-          const letterPos = currentLetterIndex++
-          const offset = letterPos - middleIndex
-          const absOffset = Math.abs(offset)
-          const isMiddle = offset === 0
 
           // Simple font sizing - all letters same size for typing
           const fontSize = 1

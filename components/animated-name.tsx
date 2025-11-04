@@ -10,6 +10,8 @@ interface AnimatedNameProps {
 
 export default function AnimatedName({ name, onAnimationComplete }: AnimatedNameProps) {
   const [showLetters, setShowLetters] = useState<string[]>([])
+  const [allTyped, setAllTyped] = useState(false)
+  const [fadeOut, setFadeOut] = useState(false)
   const hasStartedRef = useRef(false)
 
   // Split name into letters, handling spaces
@@ -40,12 +42,19 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
       } else {
         clearInterval(typingInterval)
         if (isActive) {
-          // After all letters are typed, wait a moment then trigger completion for fade-out
+          setAllTyped(true)
+          // After all letters are typed, wait a moment then fade out
           setTimeout(() => {
-            if (isActive && onAnimationComplete) {
-              onAnimationComplete()
+            if (isActive) {
+              setFadeOut(true)
+              // Trigger completion callback after fade out starts
+              setTimeout(() => {
+                if (isActive && onAnimationComplete) {
+                  onAnimationComplete()
+                }
+              }, 1500) // After fade out completes
             }
-          }, 1000) // Show completed name for 1 second before fading
+          }, 1000) // Show completed name for 1 second
         }
       }
     }, 100) // Typing speed: 100ms per letter
@@ -55,7 +64,8 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
       clearInterval(typingInterval)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // Only run once on mount
+  }, []) // Only run once on mount - allLetters is captured from closure
+
 
   return (
     <div className="animated-name-container">
@@ -68,7 +78,7 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
               <span
                 key={`space-${index}`}
                 className="name-letter name-space"
-                style={{ opacity: isVisible ? 1 : 0 }}
+                style={{ opacity: fadeOut ? 0 : (isVisible ? 1 : 0) }}
               />
             )
           }
@@ -82,13 +92,13 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
                 color: "rgb(229, 9, 20)", // Netflix red
               }}
               animate={{
-                opacity: isVisible ? 1 : 0,
+                opacity: fadeOut ? 0 : (isVisible ? 1 : 0),
                 color: "rgb(229, 9, 20)", // Netflix red
               }}
               transition={{
-                duration: 0.3,
-                delay: 0,
-                ease: "easeOut",
+                duration: fadeOut ? 1.5 : 0.3, // Slow fade out, fast typing
+                delay: fadeOut ? 0 : 0, // No delay for fade out
+                ease: fadeOut ? "easeOut" : "easeOut",
               }}
             >
               {item.letter}

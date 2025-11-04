@@ -41,21 +41,23 @@ export default function Home() {
       }
     }, 500)
 
+    // Animate name and redirect
+    // Typing (~1.3s for 13 chars) + pause (1s) + fade out (1.5s) = ~3.8s total
+    const redirectTimer = setTimeout(() => {
+      setAnimate(true)
+      setTimeout(() => {
+        router.push("/browse")
+      }, 1500)
+    }, 3800) // Wait for complete animation sequence
+
     return () => {
+      clearTimeout(redirectTimer)
       if (audioRef.current) {
         audioRef.current.pause()
         audioRef.current = null
       }
     }
   }, [router, preloadImages])
-
-  // Handle animation completion - fade out and redirect
-  const handleAnimationComplete = () => {
-    setAnimate(true)
-    setTimeout(() => {
-      router.push("/browse")
-    }, 2000) // Smooth fade out over 2 seconds
-  }
 
   // Define additional images only once to avoid re-renders
   const additionalImages = ["/images/logos/velantec-logo.png"]
@@ -76,12 +78,14 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 1 }}
         animate={{ opacity: animate ? 0 : 1 }}
-        transition={{ duration: 2, ease: "easeInOut" }}
+        transition={{ duration: 0.8 }}
         className="animated-name-wrapper"
       >
         <AnimatedName
           name="Arul Murugan"
-          onAnimationComplete={handleAnimationComplete}
+          onAnimationComplete={() => {
+            // Animation complete callback
+          }}
         />
       </motion.div>
     </div>

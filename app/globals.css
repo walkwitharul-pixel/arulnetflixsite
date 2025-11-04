@@ -209,7 +209,8 @@ h6 {
   display: inline-block;
   position: relative;
   color: rgb(229, 9, 20); /* Netflix red */
-  text-shadow: none;
+  text-shadow: none; /* No shadow - clean and elegant */
+  will-change: opacity;
 }
 
 .name-space {

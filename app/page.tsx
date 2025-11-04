@@ -9,8 +9,6 @@ import AnimatedName from "@/components/animated-name"
 
 export default function Home() {
   const [animate, setAnimate] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [showName, setShowName] = useState(true)
   const router = useRouter()
   const { preloadImages } = useImagePreloader()
   const hasPreloaded = useRef(false)
@@ -33,9 +31,6 @@ export default function Home() {
       ])
       hasPreloaded.current = true
     }
-
-    // Skip the old loader, show animated name immediately
-    setIsLoading(false)
 
     // Play sound after a short delay
     setTimeout(() => {
@@ -67,16 +62,6 @@ export default function Home() {
   // Define additional images only once to avoid re-renders
   const additionalImages = ["/images/logos/velantec-logo.png"]
 
-  if (isLoading) {
-    return (
-      <div className="netflix-loader">
-        <div className="netflix-loader-logo">
-          <div className="netflix-loader-bar"></div>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div
       className="netflix-container flex items-center justify-center h-screen bg-black overflow-hidden"
@@ -90,21 +75,19 @@ export default function Home() {
       {/* Add preloader for critical images */}
       <ImagePreloader additionalImages={additionalImages} />
 
-      {showName && (
-        <motion.div
-          initial={{ opacity: 1 }}
-          animate={{ opacity: animate ? 0 : 1 }}
-          transition={{ duration: 0.8 }}
-          className="animated-name-wrapper"
-        >
-          <AnimatedName
-            name="Arul Murugan"
-            onAnimationComplete={() => {
-              // Animation complete callback
-            }}
-          />
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 1 }}
+        animate={{ opacity: animate ? 0 : 1 }}
+        transition={{ duration: 0.8 }}
+        className="animated-name-wrapper"
+      >
+        <AnimatedName
+          name="Arul Murugan"
+          onAnimationComplete={() => {
+            // Animation complete callback
+          }}
+        />
+      </motion.div>
     </div>
   )
 }

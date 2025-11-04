@@ -187,9 +187,9 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
                         "rgb(229, 9, 20)",
                       ],
                       textShadow: [
-                        "none", // Start with no shadow (already typed state)
-                        createShadow(15, "rgba(255, 255, 255, 0.8)", isMiddle ? 0 : -0.25 * offset, 1, 1) + ", " + createShadow(50, "rgba(0, 0, 0, 0.6)", 1, 3, 3),
-                        createShadow(15, "rgba(255, 255, 255, 0.8)", isMiddle ? 0 : -0.25 * offset, 1, 1) + ", " + createShadow(50, "rgba(0, 0, 0, 0.6)", 1, 3, 3),
+                        "none", // No shadows throughout
+                        "none",
+                        "none",
                         "none",
                         "none",
                         "none",

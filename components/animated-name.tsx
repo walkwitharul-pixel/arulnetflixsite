@@ -11,7 +11,6 @@ interface AnimatedNameProps {
 export default function AnimatedName({ name, onAnimationComplete }: AnimatedNameProps) {
   const [showLetters, setShowLetters] = useState<string[]>([])
   const [allLettersVisible, setAllLettersVisible] = useState(false)
-  const [playPopOut, setPlayPopOut] = useState(false)
 
   // Split name into letters, handling spaces
   const allLetters: Array<{ letter: string; isSpace: boolean; index: number }> = []
@@ -41,30 +40,20 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
         currentIndex++
       } else {
         clearInterval(typingInterval)
-        // After all letters are typed, wait a bit then play pop-out animation
+        // After all letters are typed, mark as visible and trigger completion
+        setAllLettersVisible(true)
+        // Wait a bit then trigger completion callback for fade out
         setTimeout(() => {
-          setAllLettersVisible(true)
-          setTimeout(() => {
-            setPlayPopOut(true)
-          }, 300)
-        }, 600)
+          if (onAnimationComplete) {
+            onAnimationComplete()
+          }
+        }, 1000) // Show completed name for 1 second before fading
       }
     }, 100) // Typing speed: 100ms per letter
 
     return () => clearInterval(typingInterval)
-  }, [])
+  }, [onAnimationComplete])
 
-  // Trigger completion callback after pop-out animation
-  useEffect(() => {
-    if (playPopOut) {
-      const timer = setTimeout(() => {
-        if (onAnimationComplete) {
-          onAnimationComplete()
-        }
-      }, 3500)
-      return () => clearTimeout(timer)
-    }
-  }, [playPopOut, onAnimationComplete])
 
   const middleIndex = Math.floor(totalLetters / 2)
   let currentLetterIndex = 0
@@ -89,18 +78,9 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
           const offset = letterPos - middleIndex
           const absOffset = Math.abs(offset)
           const isMiddle = offset === 0
-          const isLeft = offset < 0
 
-          // Calculate transform values similar to Netflix animation
-          const rotationY = isMiddle ? 0 : isLeft ? 89.5 : -89.5
-          const baseScaleX = isMiddle ? 1 : Math.max(0.5, 95.9 - absOffset * 10) / 100
-          const fontSize = isMiddle ? 0.85 : 0.9 + 0.015 * Math.pow(absOffset, 2)
-
-          // Typing animation delay
-          const typingDelay = index * 0.15
-
-          // Pop-out animation (starts after all letters are visible)
-          const popOutDelay = allLettersVisible ? letterPos * 0.05 : 0
+          // Simple font sizing - all letters same size for typing
+          const fontSize = 1
 
           return (
             <motion.span
@@ -108,64 +88,23 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
               className="name-letter"
               style={{
                 fontSize: `${fontSize}em`,
-                transformOrigin: isMiddle ? "50% 50%" : `${50 + (50 / Math.max(1, Math.abs(offset)))}% 200%`,
               }}
               initial={{
                 opacity: 0,
                 transform: `scaleX(1) rotateY(0deg) scaleY(1)`,
                 color: "rgb(255, 255, 255)",
               }}
-              animate={
-                playPopOut
-                  ? {
-                      // Netflix-style pop-out animation
-                      opacity: [1, 1, 1, 1, 0.3, 0],
-                      transform: [
-                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1)`,
-                        `scaleX(${isMiddle ? 1.2 : baseScaleX * 1.2}) rotateY(${rotationY}deg) scaleY(1.2) translateY(-16%)`,
-                        `scaleX(${isMiddle ? 1.1 : baseScaleX * 1.1}) rotateY(${rotationY}deg) scaleY(1.1) translateY(-12%)`,
-                        `scaleX(${isMiddle ? 1.05 : baseScaleX * 1.05}) rotateY(${rotationY}deg) scaleY(1.05) translateY(-7%)`,
-                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
-                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
-                      ],
-                      color: [
-                        "rgb(255, 255, 255)",
-                        "rgb(255, 255, 255)",
-                        "rgb(255, 255, 255)",
-                        "rgb(255, 255, 255)",
-                        "rgb(255, 255, 255)",
-                        "rgb(229, 9, 20)",
-                      ],
-                      filter: [
-                        "brightness(1)",
-                        "brightness(1.2)",
-                        "brightness(1.1)",
-                        "brightness(1)",
-                        "brightness(0.8)",
-                        "brightness(1)",
-                      ],
-                    }
-                  : {
-                      // Typing animation - letters appear one by one (simple, no 3D transform during typing)
-                      opacity: isVisible ? 1 : 0,
-                      transform: `scaleX(1) rotateY(0deg) scaleY(1)`,
-                      color: "rgb(255, 255, 255)",
-                    }
-              }
-              transition={
-                playPopOut
-                  ? {
-                      duration: 4,
-                      times: [0, 0.15, 0.25, 0.35, 0.5, 1],
-                      delay: popOutDelay,
-                      ease: [0.4, 0, 0.2, 1],
-                    }
-                  : {
-                      duration: 0.3,
-                      delay: 0,
-                      ease: "easeOut",
-                    }
-              }
+              animate={{
+                // Typing animation - letters appear one by one
+                opacity: isVisible ? 1 : 0,
+                transform: `scaleX(1) rotateY(0deg) scaleY(1)`,
+                color: "rgb(255, 255, 255)",
+              }}
+              transition={{
+                duration: 0.3,
+                delay: 0,
+                ease: "easeOut",
+              }}
             >
               {item.letter}
             </motion.span>

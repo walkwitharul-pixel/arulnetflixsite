@@ -180,9 +180,21 @@ h6 {
   justify-content: center;
   font-family: "Netflix Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight: 700;
-  font-size: 6vw;
-  letter-spacing: 0.05em;
-  line-height: 1;
+  font-size: 8vw;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .animated-name {
+    font-size: 10vw;
+  }
+}
+
+@media (min-width: 1024px) {
+  .animated-name {
+    font-size: 12vw;
+  }
 }
 
 .name-letter {

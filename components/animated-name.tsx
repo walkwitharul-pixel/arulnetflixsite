@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 
 interface AnimatedNameProps {
   name: string
@@ -13,45 +13,60 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
   const [playPopOut, setPlayPopOut] = useState(false)
   const [allTyped, setAllTyped] = useState(false)
 
-  // Split name into letters, handling spaces
-  const allLetters: Array<{ letter: string; isSpace: boolean; index: number }> = []
-  let letterIndex = 0
-  
-  name.split("").forEach((char, index) => {
-    if (char === " ") {
-      allLetters.push({ letter: " ", isSpace: true, index: letterIndex })
-    } else {
-      allLetters.push({ letter: char, isSpace: false, index: letterIndex })
-      letterIndex++
-    }
-  })
+  // Split name into letters, handling spaces - memoize to prevent recalculation
+  const { allLetters, totalLetters, middleIndex } = useMemo(() => {
+    const letters: Array<{ letter: string; isSpace: boolean; index: number }> = []
+    let letterIndex = 0
+    
+    name.split("").forEach((char) => {
+      if (char === " ") {
+        letters.push({ letter: " ", isSpace: true, index: letterIndex })
+      } else {
+        letters.push({ letter: char, isSpace: false, index: letterIndex })
+        letterIndex++
+      }
+    })
 
-  const totalLetters = letterIndex
-  const middleIndex = Math.floor(totalLetters / 2)
+    return {
+      allLetters: letters,
+      totalLetters: letterIndex,
+      middleIndex: Math.floor(letterIndex / 2)
+    }
+  }, [name])
 
   // Type out letters one by one
   useEffect(() => {
     let currentIndex = 0
     const letters: string[] = []
+    let isCancelled = false
 
     // Start typing immediately
     const typingInterval = setInterval(() => {
+      if (isCancelled) return
+      
       if (currentIndex < allLetters.length) {
         letters.push(allLetters[currentIndex].letter)
         setShowLetters([...letters])
         currentIndex++
       } else {
         clearInterval(typingInterval)
-        setAllTyped(true)
-        // After all letters are typed, wait a bit then play pop-out animation
-        setTimeout(() => {
-          setPlayPopOut(true)
-        }, 500)
+        if (!isCancelled) {
+          setAllTyped(true)
+          // After all letters are typed, wait a bit then play pop-out animation
+          setTimeout(() => {
+            if (!isCancelled) {
+              setPlayPopOut(true)
+            }
+          }, 500)
+        }
       }
     }, 100) // Typing speed: 100ms per letter
 
-    return () => clearInterval(typingInterval)
-  }, [])
+    return () => {
+      isCancelled = true
+      clearInterval(typingInterval)
+    }
+  }, [allLetters])
 
   // Trigger completion callback after animations
   useEffect(() => {
@@ -116,20 +131,22 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
               }}
               initial={{
                 opacity: 0,
-                transform: `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(0)`,
+                transform: `scaleX(1) rotateY(0deg) scaleY(1)`,
                 color: "rgb(255, 255, 255)",
-                textShadow: createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
               }}
               animate={
                 playPopOut && allTyped
                   ? {
                       // Netflix-style pop-out then fade-back animation
-                      opacity: [0, 1, 1, 1, 1, 0.3, 0],
+                      // Keep opacity at 1 until color change, then fade
+                      opacity: [1, 1, 1, 1, 1, 1, 0.8, 0.3, 0],
                       transform: [
-                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(0)`,
+                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1)`,
                         `scaleX(${isMiddle ? 1.2 : baseScaleX * 1.2}) rotateY(${rotationY}deg) scaleY(1.2) translateY(-16%)`,
                         `scaleX(${isMiddle ? 1.1 : baseScaleX * 1.1}) rotateY(${rotationY}deg) scaleY(1.1) translateY(-12%)`,
                         `scaleX(${isMiddle ? 1.05 : baseScaleX * 1.05}) rotateY(${rotationY}deg) scaleY(1.05) translateY(-7%)`,
+                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
+                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
                         `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
                         `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
                         `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
@@ -141,12 +158,16 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
                         "rgb(255, 255, 255)",
                         "rgb(255, 255, 255)",
                         "rgb(255, 255, 255)",
+                        "rgb(255, 255, 255)",
+                        "rgb(229, 9, 20)",
                         "rgb(229, 9, 20)",
                       ],
                       textShadow: [
                         createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
                         createShadow(15, "rgba(255, 255, 255, 0.8)", isMiddle ? 0 : -0.25 * offset, 1, 1) + ", " + createShadow(50, "rgba(0, 0, 0, 0.6)", 1, 3, 3),
                         createShadow(15, "rgba(255, 255, 255, 0.8)", isMiddle ? 0 : -0.25 * offset, 1, 1) + ", " + createShadow(50, "rgba(0, 0, 0, 0.6)", 1, 3, 3),
+                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
+                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
                         createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
                         createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
                         createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
@@ -158,19 +179,18 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
                       opacity: isVisible ? 1 : 0,
                       transform: `scaleX(1) rotateY(0deg) scaleY(1)`,
                       color: "rgb(255, 255, 255)",
-                      textShadow: "none",
                     }
               }
               transition={
                 playPopOut && allTyped
                   ? {
                       duration: 4,
-                      times: [0, 0.15, 0.25, 0.35, 0.5, 0.7, 1],
+                      times: [0, 0.15, 0.25, 0.35, 0.5, 0.6, 0.7, 0.85, 1],
                       delay: letterPos * 0.05,
                       ease: [0.4, 0, 0.2, 1],
                     }
                   : {
-                      duration: 0.3,
+                      duration: 0.2,
                       delay: 0,
                       ease: "easeOut",
                     }

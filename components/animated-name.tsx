@@ -57,7 +57,7 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
         clearInterval(typingInterval)
         if (!isCancelled) {
           setAllTyped(true)
-          // After all letters are typed, wait a bit then change color
+          // After all letters are typed, wait a bit then play pop-out animation
           setTimeout(() => {
             if (!isCancelled) {
               setPlayPopOut(true)
@@ -80,7 +80,7 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
         if (onAnimationComplete) {
           onAnimationComplete()
         }
-      }, 1500) // After fade completes
+      }, 2000) // After fade and color change completes
       return () => clearTimeout(timer)
     }
   }, [playPopOut, onAnimationComplete])
@@ -113,36 +113,58 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
             )
           }
 
+          // Calculate offset from center (like in the Netflix guide)
+          const offset = letterPos - middleIndex
+          const absOffset = Math.abs(offset)
+          const isMiddle = offset === 0
+          const isLeft = offset < 0
+          
+          // Netflix-style 3D transform calculations (from guide)
+          const rotationY = isMiddle ? 0 : isLeft ? 89.5 : -89.5
+          const baseScaleX = isMiddle ? 1 : Math.max(0.5, (95.9 - absOffset * 10) / 100)
+          const fontSize = isMiddle ? 0.85 : 0.9 + 0.015 * Math.pow(absOffset, 2)
+          const transformOrigin = isMiddle ? "50% 50%" : `${50 + (50 / Math.max(1, absOffset))}% 200%`
+
           return (
             <motion.span
               key={`letter-${index}`}
               className="name-letter"
               style={{
-                fontFamily: '"Impact", "Arial Black", "Helvetica Neue", Helvetica, Arial, sans-serif',
-                fontWeight: 900,
+                fontFamily: "impact, 'Arial Black', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                fontSize: `${fontSize}em`,
+                display: "block",
+                transformOrigin: transformOrigin,
               }}
               initial={{
                 opacity: 0,
-                color: "rgb(229, 9, 20)",
+                color: "rgb(255, 255, 255)",
+                transform: `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(0)`,
               }}
               animate={
                 playPopOut && allTyped
                   ? {
-                      // Fade out while staying red
-                      opacity: [1, 0.3, 0],
-                      color: "rgb(229, 9, 20)",
+                      // Netflix-style: fade back then change to red
+                      opacity: [1, 1, 0.3, 0],
+                      color: ["rgb(255, 255, 255)", "rgb(255, 255, 255)", "rgb(255, 255, 255)", "rgb(229, 9, 20)"],
+                      transform: [
+                        `scaleX(${isMiddle ? 1.1 : baseScaleX * 1.1}) rotateY(${rotationY}deg) scaleY(1.1) translateY(-12%)`,
+                        `scaleX(${isMiddle ? 1.05 : baseScaleX * 1.05}) rotateY(${rotationY}deg) scaleY(1.05) translateY(-7%)`,
+                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
+                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
+                      ],
                     }
                   : {
-                      // Typing animation - letters appear one by one in Netflix red
+                      // Typing animation - letters appear one by one (white)
                       opacity: isVisible ? 1 : 0,
-                      color: "rgb(229, 9, 20)",
+                      color: "rgb(255, 255, 255)",
+                      transform: `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1)`,
                     }
               }
               transition={
                 playPopOut && allTyped
                   ? {
-                      duration: 1.5,
-                      times: [0, 0.5, 1],
+                      duration: 2,
+                      times: [0, 0.2, 1, 1],
                       ease: "easeInOut",
                     }
                   : {

@@ -440,29 +440,46 @@ export default function ProfilePage() {
   // Convert case studies and other content to content rows with placeholder images
   const contentRows = [
     {
-      title: "Featured Ventures",
+      title: "Trending Now",
       items: caseStudies.map((study) => ({
         id: study.id,
         title: study.title,
-        image: study.image || `/images/placeholders/ventures/${study.id}.jpg`, // Fallback placeholder
+        image: study.image || `/images/placeholders/ventures/${study.id}.jpg`,
         link: study.link,
         badge: study.id === "onestopsg-seo" ? "TOP 10" : undefined,
       })),
     },
     {
       title: "Career Journey",
-      items: careerTimelineItems.slice(0, 6).map((item) => ({
+      items: careerTimelineItems.slice(0, 8).map((item) => ({
         id: item.id,
         title: item.title,
-        image: item.image || `/images/placeholders/career/${item.id}.jpg`, // Fallback placeholder
+        image: item.image || `/images/placeholders/career/${item.id}.jpg`,
       })),
     },
     {
-      title: "Skills & Expertise",
+      title: "Popular Skills",
       items: topSkills.map((skill) => ({
         id: skill.name.toLowerCase(),
         title: skill.name,
-        image: `/images/placeholders/skills/${skill.name.toLowerCase().replace(/\s+/g, "-")}.jpg`, // Placeholder - replace with actual image
+        image: `/images/placeholders/skills/${skill.name.toLowerCase().replace(/\s+/g, "-")}.jpg`,
+      })),
+    },
+    {
+      title: "Education & Achievements",
+      items: [...educationTimelineItems.slice(0, 4), ...achievementTimelineItems.slice(0, 4)].map((item) => ({
+        id: item.id,
+        title: item.title,
+        image: item.image,
+      })),
+    },
+    {
+      title: "More to Explore",
+      items: caseStudies.slice(1).map((study) => ({
+        id: study.id + "-explore",
+        title: study.title,
+        image: study.image || `/images/placeholders/ventures/${study.id}.jpg`,
+        link: study.link,
       })),
     },
   ]
@@ -481,12 +498,14 @@ export default function ProfilePage() {
           genres={["Entrepreneurship", "Technology", "Business"]}
         />
 
-        {/* Content Rows */}
-        <div className="bg-black py-12 md:py-16">
-          <div className="container mx-auto max-w-7xl">
-            {contentRows.map((row, index) => (
-              <ContentRow key={index} title={row.title} items={row.items} />
-            ))}
+        {/* Content Rows - Netflix Style */}
+        <div className="bg-black -mt-16 md:-mt-24 relative z-10">
+          <div className="pt-8 md:pt-12 pb-12 md:pb-16">
+            <div className="w-full max-w-7xl mx-auto">
+              {contentRows.map((row, index) => (
+                <ContentRow key={index} title={row.title} items={row.items} />
+              ))}
+            </div>
           </div>
         </div>
 

@@ -1,0 +1,157 @@
+export const timelineData = [
+  {
+    timelineType: "work",
+    title: "Founder and CEO",
+    name: "VELANTEC",
+    location: "India & Singapore (Hybrid)",
+    dateRange: "February 2025 - Present",
+    techStack: "AI, Cybersecurity, Software Development",
+    summaryPoints:
+      "Leading a cutting-edge tech firm focused on AI, cybersecurity, and software solutions. VELANTEC is the backbone of my ecosystem of ventures.",
+  },
+  {
+    timelineType: "work",
+    title: "Founder and CEO",
+    name: "Aval.sg/Avan.sg",
+    location: "Singapore",
+    dateRange: "October 2023 - Present",
+    techStack: "E-commerce, Fashion Tech, Digital Retail",
+    summaryPoints:
+      "Created niche ethnic fashion brands in Singapore's digital retail space. Aval.sg caters to women, while Avan.sg focuses on traditional menswear — preserving cultural heritage through quality fashion.",
+  },
+  {
+    timelineType: "work",
+    title: "Founder and CEO",
+    name: "ONESTOPSG",
+    location: "Singapore",
+    dateRange: "April 2021 - Present",
+    techStack: "Digital Marketing, Branding, SEO",
+    summaryPoints:
+      "Leading a full-service digital marketing agency helping businesses grow through branding, performance marketing, SEO, and content strategy.",
+  },
+  {
+    timelineType: "work",
+    title: "Founder",
+    name: "GrowthLab",
+    location: "Singapore",
+    dateRange: "April 2025 - Present",
+    techStack: "Community Building, Networking, Startup Ecosystem",
+    summaryPoints:
+      "Building a curated community for founders, investors, and startup professionals. Hosting high-value events, expert-led workshops, and networking sessions aimed at building real relationships.",
+  },
+  {
+    timelineType: "work",
+    title: "Founder",
+    name: "Mrassistant.ai",
+    location: "Singapore",
+    dateRange: "2025 - Present",
+    techStack: "AI, Voice Technology, Customer Service Automation",
+    summaryPoints:
+      "Developing a revolutionary AI-powered ultra-realistic voice agent platform that replaces traditional IVR systems in SMEs and enterprises.",
+  },
+  {
+    timelineType: "work",
+    title: "Marketing Specialist",
+    name: "OKLAH SG PTE LTD",
+    location: "Singapore",
+    dateRange: "February 2020 - June 2021",
+    techStack: "Digital Marketing, Content Creation, Analytics",
+    summaryPoints:
+      "Hands-on marketing execution for F&B and retail businesses. Developed and implemented marketing strategies to increase brand awareness and drive customer engagement.",
+  },
+  {
+    timelineType: "work",
+    title: "Shipping and Logistics Coordinator",
+    name: "Velan Exports",
+    location: "India",
+    dateRange: "December 2018 - February 2020",
+    techStack: "Supply Chain Management, Logistics, Inventory Control",
+    summaryPoints:
+      "Oversaw procurement, product sourcing, and B2B logistics. Managed product imports from suppliers to retailers.",
+  },
+  {
+    timelineType: "work",
+    title: "Sales Executive",
+    name: "Mitraa INN",
+    location: "Singapore",
+    dateRange: "January 2016 - July 2016",
+    techStack: "Sales, Customer Service, Inventory Management",
+    summaryPoints:
+      "Early exposure to sales, customer service, and operational work. Assisted customers, managed inventory, and processed sales transactions.",
+  },
+  {
+    timelineType: "education",
+    title: "Bachelor of Science in Cyber Security & Forensics",
+    name: "Murdoch University",
+    location: "Australia",
+    dateRange: "April 2020 - March 2024",
+    summaryPoints:
+      "Studied cybersecurity principles, digital forensics, network security, and ethical hacking. Completed projects on security analysis and vulnerability assessment.",
+  },
+  {
+    timelineType: "education",
+    title: "Higher Diploma in Information Technology",
+    name: "Kaplan Higher Education Academy",
+    location: "Singapore",
+    dateRange: "August 2019 - April 2020",
+    summaryPoints:
+      "Focused on information technology fundamentals, programming, database management, and system analysis.",
+  },
+  {
+    timelineType: "education",
+    title: "Diploma in Computer Engineering",
+    name: "Sri Sai Ram Polytechnic College",
+    location: "Chennai, Tamil Nadu, India",
+    dateRange: "May 2016 - April 2019",
+    summaryPoints:
+      "Studied computer hardware, networking, programming, and system maintenance. Participated in technical workshops and projects.",
+  },
+  {
+    timelineType: "education",
+    title: "General Certificate of Education Normal Level (GCE N Level)",
+    name: "Bendemeer Secondary School",
+    location: "Singapore",
+    dateRange: "High School Education",
+    summaryPoints: "Completed high school education with focus on mathematics, sciences, and languages.",
+  },
+  {
+    timelineType: "education",
+    title: "Primary School Leaving Examination (PSLE)",
+    name: "Farrer Park Primary School",
+    location: "Singapore",
+    dateRange: "Primary School Education",
+    summaryPoints: "Completed primary education with foundation in mathematics, science, and languages.",
+  },
+  {
+    timelineType: "achievement",
+    title: "1st Place – Project Exhibition",
+    name: "Sri Sai Ram Polytechnic College",
+    location: "India",
+    dateRange: "2019",
+    summaryPoints: "Won first place in the college project exhibition for innovative technical solution.",
+  },
+  {
+    timelineType: "achievement",
+    title: "2nd Place – VRP Techno-Fest",
+    name: "Technical Fest",
+    location: "Tamil Nadu, India",
+    dateRange: "2019",
+    summaryPoints: "Secured second place in a state-level technical festival competition.",
+  },
+  {
+    timelineType: "achievement",
+    title: "Gold Award – Inter-School Competition",
+    name: "UG HQ",
+    location: "Singapore",
+    dateRange: "2015",
+    summaryPoints: "Received gold award in an inter-school competition organized by UG HQ, Singapore.",
+  },
+  {
+    timelineType: "achievement",
+    title: "National Youth Achievement Award",
+    name: "Silver Medal",
+    location: "Singapore",
+    dateRange: "2014",
+    summaryPoints: "Awarded the National Youth Achievement Silver Medal for leadership and community service.",
+  },
+]

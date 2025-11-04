@@ -42,13 +42,13 @@ export default function Home() {
     }, 500)
 
     // Animate name and redirect
-    // Typing (~1.3s for 13 chars) + pause (1s) + fade out (1.5s) = ~3.8s total
+    // Typing (1.2s) + pause (0.5s) + pop-out (4s) + fade (1.5s) = ~7.2s total
     const redirectTimer = setTimeout(() => {
       setAnimate(true)
       setTimeout(() => {
         router.push("/browse")
       }, 1500)
-    }, 3800) // Wait for complete animation sequence
+    }, 7200) // Wait for complete animation sequence
 
     return () => {
       clearTimeout(redirectTimer)

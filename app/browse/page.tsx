@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useEffect, useState } from "react"
 import { profileData } from "@/lib/profile-data"
 import ProfileCard from "@/components/profile-card"
-import SoundPlayer from "@/components/sound-player"
 
 export default function Browse() {
   const router = useRouter()
@@ -147,8 +146,6 @@ export default function Browse() {
           </motion.button>
         </motion.div>
       </AnimatePresence>
-
-      <SoundPlayer />
     </div>
   )
 }

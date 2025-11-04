@@ -347,11 +347,11 @@ h6 {
 }
 
 ::-webkit-scrollbar-track {
-  background: theme("colors.gray.900");
+  background: #111827;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: theme("colors.netflix.red");
+  background: rgb(var(--netflix-red));
   border-radius: 4px;
 }
 
@@ -372,12 +372,12 @@ h6 {
 
 /* For dark mode support */
 .dark .vertical-timeline-element-content {
-  background: theme("colors.gray.800") !important;
+  background: #1f2937 !important;
   color: white !important;
 }
 
 .dark .vertical-timeline-element-content-arrow {
-  border-right: 7px solid theme("colors.gray.800") !important;
+  border-right: 7px solid #1f2937 !important;
 }
 
 /* Netflix carousel */
@@ -455,7 +455,7 @@ h6 {
 
 .netflix-video-progress {
   height: 4px;
-  background-color: theme("colors.gray.700");
+  background-color: #374151;
   border-radius: 2px;
   overflow: hidden;
   margin-bottom: 10px;
@@ -464,7 +464,7 @@ h6 {
 
 .netflix-video-progress-bar {
   height: 100%;
-  background-color: theme("colors.netflix.red");
+  background-color: rgb(var(--netflix-red));
   transition: width 0.1s linear;
 }
 
@@ -522,7 +522,7 @@ h6 {
 }
 
 .netflix-play-button:hover {
-  background-color: theme("colors.netflix.red");
+  background-color: rgb(var(--netflix-red));
   transform: translate(-50%, -50%) scale(1.1);
 }
 
@@ -570,7 +570,7 @@ h6 {
 }
 
 .timeline-item-content {
-  background-color: theme("colors.netflix.black");
+  background-color: rgb(var(--netflix-black));
   border-radius: 8px;
   overflow: hidden;
   transition: transform 0.3s ease;
@@ -597,7 +597,7 @@ h6 {
 }
 
 .timeline-item-date {
-  color: theme("colors.netflix.red");
+  color: rgb(var(--netflix-red));
   font-size: 0.875rem;
   margin-bottom: 8px;
 }
@@ -613,7 +613,7 @@ h6 {
   left: 0;
   right: 0;
   height: 2px;
-  background-color: theme("colors.gray.700");
+  background-color: #374151;
   z-index: -1;
 }
 
@@ -624,7 +624,7 @@ h6 {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: theme("colors.netflix.red");
+  background-color: rgb(var(--netflix-red));
   z-index: 1;
 }
 
@@ -708,7 +708,7 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid theme("colors.netflix.red");
+  outline: 2px solid rgb(var(--netflix-red));
   outline-offset: 2px;
 }
 
@@ -729,7 +729,7 @@ textarea:focus-visible {
   width: auto;
   height: auto;
   padding: 16px;
-  background-color: theme("colors.netflix.black");
+  background-color: rgb(var(--netflix-black));
   color: white;
   z-index: 9999;
   text-decoration: none;

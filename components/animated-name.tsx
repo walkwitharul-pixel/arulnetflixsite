@@ -117,9 +117,6 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
             <motion.span
               key={`letter-${index}`}
               className="name-letter"
-              style={{
-                fontSize: "1em",
-              }}
               initial={{
                 opacity: 0,
                 color: "rgb(229, 9, 20)",

@@ -230,17 +230,7 @@ h6 {
   z-index: 10;
 }
 
-@media (max-width: 768px) {
-  .animated-name {
-    font-size: 10vw;
-  }
-}
-
-@media (max-width: 480px) {
-  .animated-name {
-    font-size: 12vw;
-  }
-}
+/* Removed conflicting media queries - using fixed em sizes above */
 
 /* Netflix loader */
 .netflix-loader {

@@ -490,14 +490,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Additional detailed sections can go here if needed */}
-
-        <motion.section variants={itemVariants} aria-labelledby="newsletter-heading">
-          <h2 id="newsletter-heading" className="sr-only">
-            Newsletter
-          </h2>
-          <NewsletterSignup />
-        </motion.section>
       </main>
     </>
   )

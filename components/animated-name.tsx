@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useState, useEffect, useMemo, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 
 interface AnimatedNameProps {
   name: string
@@ -12,7 +12,7 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
   const [showLetters, setShowLetters] = useState<string[]>([])
   const [playPopOut, setPlayPopOut] = useState(false)
   const [allTyped, setAllTyped] = useState(false)
-  const hasStartedTyping = useRef(false)
+  const hasStartedRef = useRef(false)
 
   // Split name into letters, handling spaces - memoize to prevent recalculation
   const { allLetters, totalLetters, middleIndex } = useMemo(() => {
@@ -35,19 +35,18 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
     }
   }, [name])
 
-  // Type out letters one by one
+  // Type out letters one by one - only run once on mount
   useEffect(() => {
-    // Prevent duplicate typing
-    if (hasStartedTyping.current) return
-    hasStartedTyping.current = true
-
+    if (hasStartedRef.current) return // Prevent duplicate typing
+    hasStartedRef.current = true
+    
     let currentIndex = 0
     const letters: string[] = []
-    let isCancelled = false
+    let isActive = true
 
     // Start typing immediately
     const typingInterval = setInterval(() => {
-      if (isCancelled) return
+      if (!isActive) return
       
       if (currentIndex < allLetters.length) {
         letters.push(allLetters[currentIndex].letter)
@@ -55,11 +54,11 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
         currentIndex++
       } else {
         clearInterval(typingInterval)
-        if (!isCancelled) {
+        if (isActive) {
           setAllTyped(true)
           // After all letters are typed, wait a bit then play pop-out animation
           setTimeout(() => {
-            if (!isCancelled) {
+            if (isActive) {
               setPlayPopOut(true)
             }
           }, 500)
@@ -68,10 +67,11 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
     }, 100) // Typing speed: 100ms per letter
 
     return () => {
-      isCancelled = true
+      isActive = false
       clearInterval(typingInterval)
     }
-  }, [allLetters])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Only run once on mount - allLetters is captured from closure
 
   // Trigger completion callback after animations
   useEffect(() => {
@@ -80,28 +80,18 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
         if (onAnimationComplete) {
           onAnimationComplete()
         }
-      }, 2000) // After fade and color change completes
+      }, 3500) // After pop-out animation completes
       return () => clearTimeout(timer)
     }
   }, [playPopOut, onAnimationComplete])
 
-  // Memoize letter positions to prevent recalculation
-  const letterPositions = useMemo(() => {
-    let currentIndex = 0
-    return allLetters.map((item) => {
-      if (!item.isSpace) {
-        return currentIndex++
-      }
-      return -1 // Space marker
-    })
-  }, [allLetters])
+  let currentLetterIndex = 0
 
   return (
     <div className="animated-name-container">
       <div className="animated-name">
         {allLetters.map((item, index) => {
           const isVisible = index < showLetters.length
-          const letterPos = letterPositions[index]
           
           if (item.isSpace) {
             return (
@@ -113,62 +103,94 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
             )
           }
 
-          // Calculate offset from center (like in the Netflix guide)
+          const letterPos = currentLetterIndex++
           const offset = letterPos - middleIndex
           const absOffset = Math.abs(offset)
           const isMiddle = offset === 0
           const isLeft = offset < 0
-          
-          // Netflix-style 3D transform calculations (from guide)
+
+          // Netflix-style 3D transform calculations
           const rotationY = isMiddle ? 0 : isLeft ? 89.5 : -89.5
           const baseScaleX = isMiddle ? 1 : Math.max(0.5, (95.9 - absOffset * 10) / 100)
           const fontSize = isMiddle ? 0.85 : 0.9 + 0.015 * Math.pow(absOffset, 2)
-          const transformOrigin = isMiddle ? "50% 50%" : `${50 + (50 / Math.max(1, absOffset))}% 200%`
+
+          // Create 3D shadow effect
+          const createShadow = (depth: number, color: string, x: number, y: number, blur: number) => {
+            let shadow = ""
+            for (let i = 1; i <= depth; i++) {
+              const offsetX = isMiddle ? 0 : -0.25 * offset
+              shadow += `${Math.round(i * x + offsetX)}px ${Math.round(i * y)}px ${blur}px ${color}`
+              if (i < depth) shadow += ", "
+            }
+            return shadow
+          }
 
           return (
             <motion.span
               key={`letter-${index}`}
               className="name-letter"
               style={{
-                fontFamily: "impact, 'Arial Black', 'Helvetica Neue', Helvetica, Arial, sans-serif",
                 fontSize: `${fontSize}em`,
+                transformOrigin: isMiddle ? "50% 50%" : `${50 + (50 / Math.max(1, Math.abs(offset)))}% 200%`,
                 display: "block",
-                transformOrigin: transformOrigin,
               }}
               initial={{
                 opacity: 0,
-                color: "rgb(255, 255, 255)",
                 transform: `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(0)`,
+                color: "rgb(229, 9, 20)", // Netflix red
+                textShadow: createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
               }}
               animate={
                 playPopOut && allTyped
                   ? {
-                      // Netflix-style: fade back then change to red
-                      opacity: [1, 1, 0.3, 0],
-                      color: ["rgb(255, 255, 255)", "rgb(255, 255, 255)", "rgb(255, 255, 255)", "rgb(229, 9, 20)"],
+                      // Netflix-style pop-out then fade-back animation
+                      opacity: [0, 1, 1, 1, 1, 0.3, 0],
                       transform: [
+                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(0)`,
+                        `scaleX(${isMiddle ? 1.2 : baseScaleX * 1.2}) rotateY(${rotationY}deg) scaleY(1.2) translateY(-16%)`,
                         `scaleX(${isMiddle ? 1.1 : baseScaleX * 1.1}) rotateY(${rotationY}deg) scaleY(1.1) translateY(-12%)`,
                         `scaleX(${isMiddle ? 1.05 : baseScaleX * 1.05}) rotateY(${rotationY}deg) scaleY(1.05) translateY(-7%)`,
                         `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
                         `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
+                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1) translateY(0%)`,
+                      ],
+                      color: [
+                        "rgb(229, 9, 20)", // Netflix red throughout
+                        "rgb(229, 9, 20)",
+                        "rgb(229, 9, 20)",
+                        "rgb(229, 9, 20)",
+                        "rgb(229, 9, 20)",
+                        "rgb(229, 9, 20)",
+                        "rgb(229, 9, 20)",
+                      ],
+                      textShadow: [
+                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
+                        createShadow(15, "rgba(255, 255, 255, 0.8)", isMiddle ? 0 : -0.25 * offset, 1, 1) + ", " + createShadow(50, "rgba(0, 0, 0, 0.6)", 1, 3, 3),
+                        createShadow(15, "rgba(255, 255, 255, 0.8)", isMiddle ? 0 : -0.25 * offset, 1, 1) + ", " + createShadow(50, "rgba(0, 0, 0, 0.6)", 1, 3, 3),
+                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
+                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
+                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
+                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
                       ],
                     }
                   : {
-                      // Typing animation - letters appear one by one (white)
+                      // Typing animation - letters appear one by one in Netflix red
                       opacity: isVisible ? 1 : 0,
-                      color: "rgb(255, 255, 255)",
-                      transform: `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(1)`,
+                      transform: `scaleX(1) rotateY(0deg) scaleY(1)`,
+                      color: "rgb(229, 9, 20)", // Netflix red from the start
+                      textShadow: "none",
                     }
               }
               transition={
                 playPopOut && allTyped
                   ? {
-                      duration: 2,
-                      times: [0, 0.2, 1, 1],
-                      ease: "easeInOut",
+                      duration: 4,
+                      times: [0, 0.15, 0.25, 0.35, 0.5, 0.7, 1],
+                      delay: letterPos * 0.05,
+                      ease: [0.4, 0, 0.2, 1],
                     }
                   : {
-                      duration: 0.2,
+                      duration: 0.3,
                       delay: 0,
                       ease: "easeOut",
                     }

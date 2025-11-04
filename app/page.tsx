@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import ImagePreloader from "@/components/image-preloader"
 import { useImagePreloader } from "@/components/image-preload-provider"
+import AnimatedName from "@/components/animated-name"
 
 export default function Home() {
   const [animate, setAnimate] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [showName, setShowName] = useState(true)
   const router = useRouter()
   const { preloadImages } = useImagePreloader()
   const hasPreloaded = useRef(false)
@@ -43,13 +45,13 @@ export default function Home() {
         })
       }
 
-      // Animate logo and redirect
+      // Animate name and redirect
       const redirectTimer = setTimeout(() => {
         setAnimate(true)
         setTimeout(() => {
           router.push("/browse")
-        }, 2000)
-      }, 1500)
+        }, 1500)
+      }, 4500) // Wait for name animation to complete
 
       return () => clearTimeout(redirectTimer)
     }, 2500)
@@ -83,24 +85,27 @@ export default function Home() {
         setAnimate(true)
         setTimeout(() => {
           router.push("/browse")
-        }, 2000)
+        }, 1500)
       }}
     >
       {/* Add preloader for critical images */}
       <ImagePreloader additionalImages={additionalImages} />
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className={`netflix-logo ${animate ? "animate" : ""}`}
-      >
-        <div className="netflix-a-logo">
-          <div className="netflix-a-left"></div>
-          <div className="netflix-a-right"></div>
-          <div className="netflix-a-bar"></div>
-        </div>
-      </motion.div>
+      {showName && (
+        <motion.div
+          initial={{ opacity: 1 }}
+          animate={{ opacity: animate ? 0 : 1 }}
+          transition={{ duration: 0.8 }}
+          className="animated-name-wrapper"
+        >
+          <AnimatedName
+            name="Arul Murugan"
+            onAnimationComplete={() => {
+              // Animation complete callback
+            }}
+          />
+        </motion.div>
+      )}
     </div>
   )
 }

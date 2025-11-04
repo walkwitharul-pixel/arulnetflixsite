@@ -82,7 +82,7 @@ export default function Navbar() {
 
       <nav
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-          scrolled ? "bg-[#141414] shadow-lg" : "bg-gradient-to-b from-black/80 to-transparent"
+          scrolled ? "bg-[#141414] shadow-lg backdrop-blur-sm" : "bg-gradient-to-b from-black/90 to-transparent"
         }`}
         role="navigation"
         aria-label="Main navigation"

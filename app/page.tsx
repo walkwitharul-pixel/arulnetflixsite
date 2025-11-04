@@ -42,13 +42,13 @@ export default function Home() {
     }, 500)
 
     // Animate name and redirect
-    // Typing (1.2s) + pause (0.5s) + pop-out (4s) + fade (1.5s) = ~7.2s total
+    // Typing (~1.3s for 13 chars) + pause (0.5s) + color change + fade (2s) = ~3.8s total
     const redirectTimer = setTimeout(() => {
       setAnimate(true)
       setTimeout(() => {
         router.push("/browse")
       }, 1500)
-    }, 7200) // Wait for complete animation sequence
+    }, 3800) // Wait for complete animation sequence
 
     return () => {
       clearTimeout(redirectTimer)
@@ -82,6 +82,7 @@ export default function Home() {
         className="animated-name-wrapper"
       >
         <AnimatedName
+          key="animated-name"
           name="Arul Murugan"
           onAnimationComplete={() => {
             // Animation complete callback

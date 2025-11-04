@@ -85,24 +85,27 @@ export default function Browse() {
         ) : (
           <motion.div
             key="content"
-            className="w-full max-w-7xl mx-auto flex flex-col items-center justify-center px-6 py-16 md:py-20"
+            className="w-full flex flex-col items-center justify-center min-h-screen py-12"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
-            {/* Netflix-style "Who's watching?" title */}
+            {/* Netflix-style "Who's watching?" title - exact match */}
             <motion.h1
-              className="who-is-watching text-white text-4xl md:text-5xl lg:text-6xl mb-20 md:mb-24 text-center font-medium tracking-tight"
+              className="who-is-watching text-white text-5xl md:text-6xl lg:text-7xl mb-16 md:mb-20 text-center font-bold"
               variants={titleVariants}
-              style={{ fontFamily: '"Netflix Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+              style={{ 
+                fontFamily: '"Netflix Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                letterSpacing: '0.02em'
+              }}
             >
               Who&apos;s watching?
             </motion.h1>
 
-            {/* Profile cards in horizontal row - Netflix style with generous spacing */}
+            {/* Profile cards in horizontal row - Netflix exact spacing */}
             <motion.div
-              className="profiles-grid flex flex-wrap justify-center gap-12 md:gap-16 lg:gap-20 mb-20 md:mb-24"
+              className="profiles-grid flex flex-wrap justify-center gap-8 md:gap-12 lg:gap-16 mb-16 md:mb-20"
               variants={containerVariants}
             >
               <AnimatePresence>
@@ -120,9 +123,9 @@ export default function Browse() {
               </AnimatePresence>
             </motion.div>
 
-            {/* Manage Profiles button - Netflix style with substantial spacing */}
+            {/* Manage Profiles button - Netflix exact style */}
             <motion.button
-              className="manage-profiles-btn px-8 py-3 bg-transparent border border-[#808080] text-white text-base font-medium tracking-wide hover:border-white transition-all duration-200"
+              className="manage-profiles-btn px-10 py-3 bg-transparent border border-white text-white text-sm md:text-base font-normal tracking-wide hover:border-white transition-all duration-200"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}

@@ -16,7 +16,6 @@ interface ProfileCardProps {
 
 export default function ProfileCard({ name, image, alt, description, onClick, index }: ProfileCardProps) {
   const [imageError, setImageError] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
   const [isSelected, setIsSelected] = useState(false)
 
   // Profile colors based on name
@@ -68,16 +67,6 @@ export default function ProfileCard({ name, image, alt, description, onClick, in
   }
 
   const imageVariants = {
-    hover: {
-      scale: 1.05,
-      transition: {
-        duration: 0.2,
-        ease: "easeOut",
-      },
-    },
-    tap: {
-      scale: 0.98,
-    },
     selected: {
       scale: 1.05,
       transition: {
@@ -88,12 +77,6 @@ export default function ProfileCard({ name, image, alt, description, onClick, in
   }
 
   const nameVariants = {
-    hover: {
-      color: "#ffffff",
-      transition: {
-        duration: 0.2,
-      },
-    },
     selected: {
       color: "#ffffff",
       transition: {
@@ -104,26 +87,22 @@ export default function ProfileCard({ name, image, alt, description, onClick, in
 
   return (
     <motion.div
-      className="profile-card flex flex-col items-center cursor-pointer group"
+      className="profile-card flex flex-col items-center cursor-pointer"
       onClick={handleClick}
       variants={containerVariants}
       initial="hidden"
       animate={isSelected ? "selected" : "visible"}
       exit="exit"
       custom={index}
-      whileHover="hover"
-      whileTap="tap"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Netflix-style square profile card */}
+      {/* Netflix-style square profile card - exact match */}
       <motion.div
-        className={`image-container relative overflow-hidden transition-all duration-300 w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] md:w-[160px] md:h-[160px] lg:w-[180px] lg:h-[180px] ${
-          isSelected ? "ring-4 ring-white" : "ring-0 group-hover:ring-2 group-hover:ring-white/50"
+        className={`image-container relative overflow-hidden w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] md:w-[180px] md:h-[180px] ${
+          isSelected ? "ring-4 ring-white" : ""
         }`}
         variants={imageVariants}
         style={{
-          borderRadius: "4px",
+          borderRadius: "0px", // Perfect square, no rounded corners
         }}
       >
         {imageError ? (
@@ -144,36 +123,25 @@ export default function ProfileCard({ name, image, alt, description, onClick, in
           />
         )}
 
-        {/* Netflix-style selection indicator */}
+        {/* Netflix-style selection indicator - white border */}
         {isSelected && (
           <motion.div
-            className="absolute inset-0 ring-4 ring-white"
+            className="absolute inset-0 border-4 border-white"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
-            style={{
-              borderRadius: "4px",
-            }}
-          />
-        )}
-
-        {/* Hover overlay effect */}
-        {isHovered && !isSelected && (
-          <motion.div
-            className="absolute inset-0 bg-black/20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
           />
         )}
       </motion.div>
 
-      {/* Profile name - Netflix style */}
+      {/* Profile name - Netflix exact style */}
       <motion.h3
-        className="profile-name text-white mt-4 text-center text-sm md:text-base font-normal transition-colors duration-200"
+        className="profile-name text-white mt-4 text-center text-sm md:text-base font-normal capitalize"
         variants={nameVariants}
-        style={{ fontFamily: '"Netflix Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+        style={{ 
+          fontFamily: '"Netflix Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          letterSpacing: '0.01em'
+        }}
       >
         {name}
       </motion.h3>

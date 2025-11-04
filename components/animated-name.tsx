@@ -85,7 +85,16 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
     }
   }, [playPopOut, onAnimationComplete])
 
-  let currentLetterIndex = 0
+  // Calculate letter positions once and memoize
+  const letterPositions = useMemo(() => {
+    let currentIndex = 0
+    return allLetters.map((item) => {
+      if (!item.isSpace) {
+        return currentIndex++
+      }
+      return -1 // Space marker
+    })
+  }, [allLetters])
 
   return (
     <div className="animated-name-container">
@@ -103,7 +112,9 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
             )
           }
 
-          const letterPos = currentLetterIndex++
+          const letterPos = letterPositions[index]
+          if (letterPos === -1) return null // Skip spaces (shouldn't happen but safety check)
+          
           const offset = letterPos - middleIndex
           const absOffset = Math.abs(offset)
           const isMiddle = offset === 0
@@ -134,19 +145,31 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
                 transformOrigin: isMiddle ? "50% 50%" : `${50 + (50 / Math.max(1, Math.abs(offset)))}% 200%`,
                 display: "block",
               }}
-              initial={{
-                opacity: 0,
-                transform: `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(0)`,
-                color: "rgb(229, 9, 20)", // Netflix red
-                textShadow: createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
-              }}
+              initial={
+                playPopOut && allTyped
+                  ? {
+                      // Start from current typed state (already visible)
+                      opacity: 1,
+                      transform: `scaleX(1) rotateY(0deg) scaleY(1) translateY(0%)`,
+                      color: "rgb(229, 9, 20)",
+                      textShadow: "none",
+                    }
+                  : {
+                      // Initial state for typing
+                      opacity: 0,
+                      transform: `scaleX(1) rotateY(0deg) scaleY(1)`,
+                      color: "rgb(229, 9, 20)",
+                      textShadow: "none",
+                    }
+              }
               animate={
                 playPopOut && allTyped
                   ? {
                       // Netflix-style pop-out then fade-back animation
-                      opacity: [0, 1, 1, 1, 1, 0.3, 0],
+                      // Start at opacity 1 (already visible) to prevent re-typing effect
+                      opacity: [1, 1, 1, 1, 1, 0.3, 0],
                       transform: [
-                        `scaleX(${baseScaleX}) rotateY(${rotationY}deg) scaleY(0)`,
+                        `scaleX(1) rotateY(0deg) scaleY(1) translateY(0%)`, // Start from current position
                         `scaleX(${isMiddle ? 1.2 : baseScaleX * 1.2}) rotateY(${rotationY}deg) scaleY(1.2) translateY(-16%)`,
                         `scaleX(${isMiddle ? 1.1 : baseScaleX * 1.1}) rotateY(${rotationY}deg) scaleY(1.1) translateY(-12%)`,
                         `scaleX(${isMiddle ? 1.05 : baseScaleX * 1.05}) rotateY(${rotationY}deg) scaleY(1.05) translateY(-7%)`,
@@ -164,13 +187,13 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
                         "rgb(229, 9, 20)",
                       ],
                       textShadow: [
-                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
+                        "none", // Start with no shadow (already typed state)
                         createShadow(15, "rgba(255, 255, 255, 0.8)", isMiddle ? 0 : -0.25 * offset, 1, 1) + ", " + createShadow(50, "rgba(0, 0, 0, 0.6)", 1, 3, 3),
                         createShadow(15, "rgba(255, 255, 255, 0.8)", isMiddle ? 0 : -0.25 * offset, 1, 1) + ", " + createShadow(50, "rgba(0, 0, 0, 0.6)", 1, 3, 3),
-                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
-                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
-                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
-                        createShadow(15, "rgba(255, 255, 255, 0)", 0, 0, 0) + ", " + createShadow(50, "rgba(0, 0, 0, 0)", 0, 0, 0),
+                        "none",
+                        "none",
+                        "none",
+                        "none",
                       ],
                     }
                   : {

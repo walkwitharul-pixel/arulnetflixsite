@@ -10,19 +10,15 @@ interface AnimatedNameProps {
 
 export default function AnimatedName({ name, onAnimationComplete }: AnimatedNameProps) {
   const [showLetters, setShowLetters] = useState<string[]>([])
-  const [allTyped, setAllTyped] = useState(false)
   const hasStartedRef = useRef(false)
 
   // Split name into letters, handling spaces
-  const allLetters: Array<{ letter: string; isSpace: boolean }> = []
-  
-  name.split("").forEach((char) => {
-    if (char === " ") {
-      allLetters.push({ letter: " ", isSpace: true })
-    } else {
-      allLetters.push({ letter: char, isSpace: false })
-    }
-  })
+  const allLetters = useMemo(() => {
+    return name.split("").map((char) => ({
+      letter: char,
+      isSpace: char === " "
+    }))
+  }, [name])
 
   // Type out letters one by one - only run once on mount
   useEffect(() => {
@@ -44,8 +40,7 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
       } else {
         clearInterval(typingInterval)
         if (isActive) {
-          setAllTyped(true)
-          // After all letters are typed, wait a bit then trigger completion
+          // After all letters are typed, wait a moment then trigger completion for fade-out
           setTimeout(() => {
             if (isActive && onAnimationComplete) {
               onAnimationComplete()
@@ -82,15 +77,11 @@ export default function AnimatedName({ name, onAnimationComplete }: AnimatedName
             <motion.span
               key={`letter-${index}`}
               className="name-letter"
-              style={{
-                fontSize: "1em",
-              }}
               initial={{
                 opacity: 0,
                 color: "rgb(229, 9, 20)", // Netflix red
               }}
               animate={{
-                // Simple typing animation - letters appear one by one
                 opacity: isVisible ? 1 : 0,
                 color: "rgb(229, 9, 20)", // Netflix red
               }}

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import { useParams } from "next/navigation"
 import Navbar from "@/components/navbar"
-import NetflixHero from "@/components/netflix-hero"
+import HeroSection from "@/components/hero-section"
 import ContentRow from "@/components/content-row"
 import InteractiveTimeline from "@/components/interactive-timeline"
 import CaseStudiesCarousel from "@/components/case-studies-carousel"
@@ -437,8 +437,8 @@ export default function ProfilePage() {
     )
   }
 
-  // Convert case studies and other content to Netflix-style rows
-  const netflixContentRows = [
+  // Convert case studies and other content to content rows
+  const contentRows = [
     {
       title: "Featured Ventures",
       items: caseStudies.map((study) => ({
@@ -471,20 +471,20 @@ export default function ProfilePage() {
     <>
       <Navbar />
       <main id="main-content" className="bg-black min-h-screen">
-        {/* Netflix Hero Section */}
-        <NetflixHero
+        {/* Hero Section */}
+        <HeroSection
           title={currentProfileContent.title}
           description={currentProfileContent.description}
           backgroundImage={backgroundGif}
-          overlayText="Five kids all in one barn and no parents. Oh!"
+          overlayText="Building innovative solutions and creating impactful ventures"
           rating="PG"
           genres={["Entrepreneurship", "Technology", "Business"]}
         />
 
-        {/* Content Rows - Netflix Style */}
-        <div className="bg-black py-8">
+        {/* Content Rows */}
+        <div className="bg-black py-12">
           <div className="container mx-auto">
-            {netflixContentRows.map((row, index) => (
+            {contentRows.map((row, index) => (
               <ContentRow key={index} title={row.title} items={row.items} />
             ))}
           </div>

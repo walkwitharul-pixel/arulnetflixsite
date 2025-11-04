@@ -96,9 +96,9 @@ export default function Navbar() {
                 aria-label="Go to homepage"
               >
                 <div className="h-8 w-auto relative">
-                  {/* Netflix-style logo */}
+                  {/* Brand logo */}
                   <div className="text-3xl font-bold text-red-600 tracking-tight">
-                    NETFLIX
+                    ARUL
                   </div>
                 </div>
               </Link>

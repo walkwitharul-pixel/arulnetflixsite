@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import ImagePreloader from "@/components/image-preloader"
@@ -13,6 +13,18 @@ export default function Home() {
   const { preloadImages } = useImagePreloader()
   const hasPreloaded = useRef(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  // Handle animation completion callback
+  const handleAnimationComplete = useCallback(() => {
+    // After typing completes (1.3s) + wait (1s) = 2.3s, start fade out
+    setTimeout(() => {
+      setAnimate(true)
+      // After fade out (1.5s), redirect
+      setTimeout(() => {
+        router.push("/browse")
+      }, 1500)
+    }, 0)
+  }, [router])
 
   useEffect(() => {
     // Create audio element
@@ -41,23 +53,13 @@ export default function Home() {
       }
     }, 500)
 
-    // Animate name and redirect
-    // Typing (1.2s) + pause (0.5s) + pop-out (4s) + fade (1.5s) = ~7.2s total
-    const redirectTimer = setTimeout(() => {
-      setAnimate(true)
-      setTimeout(() => {
-        router.push("/browse")
-      }, 1500)
-    }, 7200) // Wait for complete animation sequence
-
     return () => {
-      clearTimeout(redirectTimer)
       if (audioRef.current) {
         audioRef.current.pause()
         audioRef.current = null
       }
     }
-  }, [router, preloadImages])
+  }, [preloadImages])
 
   // Define additional images only once to avoid re-renders
   const additionalImages = ["/images/logos/velantec-logo.png"]
@@ -78,14 +80,12 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 1 }}
         animate={{ opacity: animate ? 0 : 1 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
         className="animated-name-wrapper"
       >
         <AnimatedName
           name="Arul Murugan"
-          onAnimationComplete={() => {
-            // Animation complete callback
-          }}
+          onAnimationComplete={handleAnimationComplete}
         />
       </motion.div>
     </div>

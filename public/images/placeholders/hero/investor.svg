@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" fill="none">
+  <defs>
+    <linearGradient id="hbg" x1="0" y1="0" x2="1920" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#050505"/>
+      <stop offset="0.5" stop-color="#141414"/>
+      <stop offset="1" stop-color="#0A0A0A"/>
+    </linearGradient>
+    <radialGradient id="hglow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1300 420) rotate(90) scale(700 900)">
+      <stop stop-color="#0077B5" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#0077B5" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="1100" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#000" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#hbg)"/>
+  <rect width="1920" height="1080" fill="url(#hglow)"/>
+  <circle cx="1450" cy="380" r="320" fill="#0077B5" fill-opacity="0.18"/>
+  <circle cx="1600" cy="700" r="220" fill="#0077B5" fill-opacity="0.1"/>
+  <rect width="1100" height="1080" fill="url(#fade)"/>
+  <text x="90" y="520" fill="#FFFFFF" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="92" font-weight="800">INVESTOR VIEW</text>
+  <text x="90" y="590" fill="#E5E5E5" font-family="Helvetica, Arial, sans-serif" font-size="32">Metrics, growth, and opportunity</text>
+</svg>

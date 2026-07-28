@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="640" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B0B0B"/>
+      <stop offset="0.45" stop-color="#1A1A1A"/>
+      <stop offset="1" stop-color="#0D0D0D"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="180" x2="640" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C41E3A" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#C41E3A" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(480 80) rotate(90) scale(220 280)">
+      <stop stop-color="#C41E3A" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#C41E3A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#glow)"/>
+  <rect width="640" height="360" fill="url(#accent)"/>
+  <circle cx="520" cy="70" r="90" fill="#C41E3A" fill-opacity="0.12"/>
+  <circle cx="80" cy="300" r="120" fill="#C41E3A" fill-opacity="0.08"/>
+  <rect x="28" y="28" width="52" height="6" rx="2" fill="#C41E3A"/>
+  <text x="28" y="250" fill="#FFFFFF" font-family="Arial Black, Helvetica, Arial, sans-serif" font-size="34" font-weight="800">Aval.sg</text>
+  <text x="28" y="286" fill="#B3B3B3" font-family="Helvetica, Arial, sans-serif" font-size="16">E-commerce Growth</text>
+  <rect x="0" y="340" width="640" height="20" fill="#000" fill-opacity="0.35"/>
+</svg>

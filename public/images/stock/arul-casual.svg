@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1520"/>
+      <stop offset="100%" stop-color="#E50914" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#g)"/>
+  <rect x="24" y="24" width="752" height="952" fill="none" stroke="#ffffff33" stroke-width="2" stroke-dasharray="10 8" rx="8"/>
+  <text x="400.0" y="380.0" text-anchor="middle" fill="#fff" font-family="Arial Black,Arial,sans-serif" font-size="57.142857142857146" font-weight="900">CASUAL</text>
+  <text x="400.0" y="480.0" text-anchor="middle" fill="#E50914" font-family="Arial,sans-serif" font-size="28" font-weight="700">PORTRAIT</text>
+  <text x="400.0" y="580.0" text-anchor="middle" fill="#b3b3b3" font-family="Arial,sans-serif" font-size="20">STOCK PLACEHOLDER</text>
+  <text x="400.0" y="720.0" text-anchor="middle" fill="#808080" font-family="Arial,sans-serif" font-size="18">Replace with casual portrait</text><text x="400.0" y="748.0" text-anchor="middle" fill="#808080" font-family="Arial,sans-serif" font-size="18">public/images/stock/arul-casual.jpg</text>
+</svg>

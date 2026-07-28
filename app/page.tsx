@@ -38,11 +38,7 @@ export default function Home() {
 
   useEffect(() => {
     let cancelled = false
-    const playTimer = setTimeout(() => {
-      if (cancelled || !audioRef.current) return
-      audioRef.current.play().catch(() => {})
-    }, 500)
-
+    let playTimer: ReturnType<typeof setTimeout> | null = null
     const redirectTimer = setTimeout(() => {
       if (!cancelled) skipToBrowse(false)
     }, 7200)
@@ -54,6 +50,10 @@ export default function Home() {
         const audio = new Audio("/sounds/netflix-intro.mp3")
         audio.volume = 0.5
         audioRef.current = audio
+        playTimer = setTimeout(() => {
+          if (cancelled || !audioRef.current) return
+          audioRef.current.play().catch(() => {})
+        }, 500)
       })
       .catch(() => {})
 
@@ -70,8 +70,8 @@ export default function Home() {
 
     return () => {
       cancelled = true
-      clearTimeout(playTimer)
       clearTimeout(redirectTimer)
+      if (playTimer) clearTimeout(playTimer)
       if (skipTimerRef.current) clearTimeout(skipTimerRef.current)
       if (audioRef.current) {
         audioRef.current.pause()

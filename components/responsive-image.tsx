@@ -98,7 +98,11 @@ const ResponsiveImage = ({
     } else {
       setHasError(true)
       setIsLoading(false)
-      onError?.()
+      try {
+        onError?.()
+      } catch {
+        // Never let image fallback callbacks throw into the Next overlay
+      }
     }
   }
 

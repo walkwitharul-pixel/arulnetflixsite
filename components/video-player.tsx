@@ -18,6 +18,22 @@ function isProbablyYoutube(id?: string) {
   return Boolean(id && /^[\w-]{6,}$/.test(id))
 }
 
+async function mediaFileExists(path: string): Promise<boolean> {
+  try {
+    const res = await fetch(path, { method: "HEAD", cache: "no-store" })
+    if (res.ok) return true
+    // Some hosts reject HEAD — try a tiny ranged GET
+    const get = await fetch(path, {
+      method: "GET",
+      headers: { Range: "bytes=0-0" },
+      cache: "no-store",
+    })
+    return get.ok || get.status === 206
+  } catch {
+    return false
+  }
+}
+
 export default function VideoPlayer({
   src,
   youtubeId,
@@ -31,42 +47,31 @@ export default function VideoPlayer({
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
+  const [checking, setChecking] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  const startPlayback = () => {
-    if (src) {
-      const probe = document.createElement("video")
-      probe.preload = "metadata"
-      probe.src = src
-      const onOk = () => {
-        cleanup()
-        setShouldAutoPlay(true)
-        setMode("file")
-        setIsPlaying(true)
-      }
-      const onFail = () => {
-        cleanup()
-        if (isProbablyYoutube(youtubeId)) {
-          setMode("youtube")
+  const startPlayback = async () => {
+    if (checking) return
+    setChecking(true)
+    try {
+      if (src) {
+        const exists = await mediaFileExists(src)
+        if (exists) {
+          setShouldAutoPlay(true)
+          setMode("file")
           setIsPlaying(true)
-        } else {
-          setMode("missing")
+          return
         }
       }
-      const cleanup = () => {
-        probe.removeEventListener("loadeddata", onOk)
-        probe.removeEventListener("error", onFail)
+      if (isProbablyYoutube(youtubeId)) {
+        setMode("youtube")
+        setIsPlaying(true)
+        return
       }
-      probe.addEventListener("loadeddata", onOk)
-      probe.addEventListener("error", onFail)
-      return
+      setMode("missing")
+    } finally {
+      setChecking(false)
     }
-    if (isProbablyYoutube(youtubeId)) {
-      setMode("youtube")
-      setIsPlaying(true)
-      return
-    }
-    setMode("missing")
   }
 
   useEffect(() => {
@@ -102,7 +107,8 @@ export default function VideoPlayer({
     if (!el) return
     if (el.paused) {
       el.play()
-      setIsPlaying(true)
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false))
     } else {
       el.pause()
       setIsPlaying(false)
@@ -112,18 +118,28 @@ export default function VideoPlayer({
   if (mode === "idle") {
     return (
       <div className="relative w-full aspect-video bg-black rounded-[2px] overflow-hidden">
-        <Image src={thumbnailUrl} alt="" fill className="object-cover opacity-80" sizes="100vw" priority={preload} />
+        <Image
+          src={thumbnailUrl || "/images/stock/arul-hero.svg"}
+          alt=""
+          fill
+          className="object-cover opacity-80"
+          sizes="100vw"
+          priority={preload}
+        />
         <div className="absolute inset-0 bg-black/40" />
         <button
           type="button"
-          onClick={startPlayback}
+          onClick={() => {
+            void startPlayback()
+          }}
+          disabled={checking}
           className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-nf-text"
           aria-label={`Play ${title}`}
         >
           <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-white text-black shadow-lg">
             <Play className="fill-black ml-1" size={28} strokeWidth={0} />
           </span>
-          <span className="text-sm text-nf-text/90">{title}</span>
+          <span className="text-sm text-nf-text/90">{checking ? "Loading…" : title}</span>
         </button>
       </div>
     )
@@ -170,6 +186,10 @@ export default function VideoPlayer({
         onClick={togglePlay}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
+        onError={() => {
+          setIsPlaying(false)
+          setMode(isProbablyYoutube(youtubeId) ? "youtube" : "missing")
+        }}
       />
       <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/90 to-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
         <div className="h-1 bg-white/20 rounded-full mb-3 overflow-hidden">

@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation"
 
 type ProfileType = "stalker" | "investor" | "recruiter" | "community" | "adventurer" | null
 
+const PROFILE_STORAGE_KEY = "arul-active-profile"
+const VALID_PROFILES = ["stalker", "investor", "recruiter", "community", "adventurer"] as const
+
 interface ProfileContextType {
   activeProfile: ProfileType
   setActiveProfile: (profile: ProfileType) => void
@@ -18,43 +21,47 @@ interface ProfileContextType {
 }
 
 const defaultProfileTheme = {
-  primary: "#E50914", // Netflix red
-  secondary: "#141414", // Netflix black
+  primary: "#E50914",
+  secondary: "#141414",
   accent: "#FFFFFF",
   background: "#000000",
 }
 
 const profileThemes = {
   stalker: {
-    primary: "#E50914", // Netflix red
-    secondary: "#141414", // Netflix black
+    primary: "#E50914",
+    secondary: "#141414",
     accent: "#FFFFFF",
     background: "#000000",
   },
   investor: {
-    primary: "#0077B5", // LinkedIn blue
+    primary: "#0077B5",
     secondary: "#000000",
     accent: "#FFFFFF",
-    background: "#0A0A1A", // Dark blue-black
+    background: "#0A0A1A",
   },
   recruiter: {
-    primary: "#6441A4", // Twitch purple
+    primary: "#6441A4",
     secondary: "#0E0E10",
     accent: "#FFFFFF",
     background: "#0A0A0A",
   },
   community: {
-    primary: "#FF9900", // Amazon orange
-    secondary: "#232F3E", // Amazon dark blue
+    primary: "#FF9900",
+    secondary: "#232F3E",
     accent: "#FFFFFF",
     background: "#111111",
   },
   adventurer: {
-    primary: "#1DB954", // Spotify green
-    secondary: "#191414", // Spotify black
+    primary: "#1DB954",
+    secondary: "#191414",
     accent: "#FFFFFF",
-    background: "#121212", // Spotify dark gray
+    background: "#121212",
   },
+}
+
+function isValidProfile(name: string | null | undefined): name is Exclude<ProfileType, null> {
+  return Boolean(name && (VALID_PROFILES as readonly string[]).includes(name))
 }
 
 const ProfileContext = createContext<ProfileContextType>({
@@ -67,32 +74,42 @@ const ProfileContext = createContext<ProfileContextType>({
 export const useProfile = () => useContext(ProfileContext)
 
 export const ProfileProvider = ({ children }: { children: ReactNode }) => {
-  const [activeProfile, setActiveProfile] = useState<ProfileType>(null)
+  const [activeProfile, setActiveProfileState] = useState<ProfileType>(null)
+  const [hydrated, setHydrated] = useState(false)
   const pathname = usePathname()
 
-  // Extract profile from URL if available
   useEffect(() => {
-    if (pathname) {
-      const match = pathname.match(/\/profile\/([a-zA-Z]+)/)
-      if (match && match[1]) {
-        const profileName = match[1].toLowerCase() as ProfileType
-        if (
-          profileName === "stalker" ||
-          profileName === "investor" ||
-          profileName === "recruiter" ||
-          profileName === "community" ||
-          profileName === "adventurer"
-        ) {
-          setActiveProfile(profileName)
-        }
+    try {
+      const stored = localStorage.getItem(PROFILE_STORAGE_KEY)
+      if (isValidProfile(stored)) setActiveProfileState(stored)
+    } catch {
+      // ignore storage errors
+    }
+    setHydrated(true)
+  }, [])
+
+  const setActiveProfile = (profile: ProfileType) => {
+    setActiveProfileState(profile)
+    try {
+      if (profile) localStorage.setItem(PROFILE_STORAGE_KEY, profile)
+      else localStorage.removeItem(PROFILE_STORAGE_KEY)
+    } catch {
+      // ignore storage errors
+    }
+  }
+
+  useEffect(() => {
+    if (!pathname || !hydrated) return
+    const match = pathname.match(/\/profile\/([a-zA-Z]+)/)
+    if (match?.[1]) {
+      const profileName = match[1].toLowerCase()
+      if (isValidProfile(profileName)) {
+        setActiveProfile(profileName)
       }
     }
-  }, [pathname])
+  }, [pathname, hydrated])
 
-  // Get profile color
   const profileColor = activeProfile ? profileThemes[activeProfile].primary : defaultProfileTheme.primary
-
-  // Get profile theme
   const profileTheme = activeProfile ? profileThemes[activeProfile] : defaultProfileTheme
 
   return (

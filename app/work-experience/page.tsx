@@ -13,9 +13,9 @@ import { useEffect } from "react"
 
 export default function WorkExperience() {
   useEffect(() => {
-    const hash = window.location.hash
-    if (!hash) return
-    const el = document.querySelector(hash)
+    const raw = window.location.hash.replace(/^#/, "")
+    if (!raw) return
+    const el = document.getElementById(decodeURIComponent(raw))
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" })
     }
@@ -48,8 +48,8 @@ export default function WorkExperience() {
 
               return (
                 <motion.article
-                  key={`${item.name}-${index}`}
-                  id={nameSlug}
+                  key={`${item.name}-${item.timelineType}-${index}`}
+                  id={`${nameSlug}-${item.timelineType}`}
                   data-timeline-index={index}
                   className="relative flex flex-col sm:flex-row gap-0 overflow-hidden rounded-[2px] bg-nf-elevated scroll-mt-24"
                   initial={{ opacity: 0, y: 14 }}

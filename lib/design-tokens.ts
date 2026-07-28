@@ -72,21 +72,22 @@ export const logoMap: Record<string, string> = {
 }
 
 export function slugify(text: string): string {
-  return text.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "").replace(/--+/g, "-")
+  return text
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/--+/g, "-")
 }
 
 export function resolveThumbnail(idOrName: string, fallbackTitle?: string): string {
-  const key = idOrName
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/&/g, "")
-    .replace(/--+/g, "-")
+  const key = slugify(idOrName)
 
   if (logoMap[key]) return logoMap[key]
   if (logoMap[idOrName.toLowerCase()]) return logoMap[idOrName.toLowerCase()]
 
   for (const [k, path] of Object.entries(logoMap)) {
-    if (key.includes(k) || k.includes(key)) return path
+    if (key.includes(k) || k.includes(key) || slugify(k) === key) return path
   }
 
   // Prefer a stock poster over the gray placeholder.svg

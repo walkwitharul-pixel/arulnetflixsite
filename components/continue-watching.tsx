@@ -4,7 +4,11 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { skillsData } from "@/lib/skills-data"
 
-export default function ContinueWatching({ profile }) {
+interface ContinueWatchingProps {
+  profile?: string
+}
+
+export default function ContinueWatching({ profile: _profile }: ContinueWatchingProps) {
   // Get top 6 skills
   const topSkills = skillsData.slice(0, 6)
 

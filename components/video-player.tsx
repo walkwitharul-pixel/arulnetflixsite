@@ -30,6 +30,7 @@ export default function VideoPlayer({
   const [isMuted, setIsMuted] = useState(false)
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
+  const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   const startPlayback = () => {
@@ -39,11 +40,9 @@ export default function VideoPlayer({
       probe.src = src
       const onOk = () => {
         cleanup()
+        setShouldAutoPlay(true)
         setMode("file")
         setIsPlaying(true)
-        requestAnimationFrame(() => {
-          videoRef.current?.play().catch(() => {})
-        })
       }
       const onFail = () => {
         cleanup()
@@ -73,6 +72,12 @@ export default function VideoPlayer({
   useEffect(() => {
     const el = videoRef.current
     if (!el || mode !== "file") return
+
+    if (shouldAutoPlay) {
+      el.play().catch(() => setIsPlaying(false))
+      setShouldAutoPlay(false)
+    }
+
     const onTime = () => {
       setProgress(el.currentTime)
       setDuration(el.duration || 0)
@@ -83,7 +88,7 @@ export default function VideoPlayer({
       el.removeEventListener("timeupdate", onTime)
       el.removeEventListener("loadedmetadata", onTime)
     }
-  }, [mode])
+  }, [mode, shouldAutoPlay])
 
   const formatTime = (t: number) => {
     if (!Number.isFinite(t)) return "0:00"

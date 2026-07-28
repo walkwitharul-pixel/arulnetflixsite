@@ -180,7 +180,7 @@ export default function AboutMeContent({ content }: AboutMeContentProps) {
             >
               {item.type === "text" && (
                 <p className="text-gray-300 text-lg leading-relaxed">
-                  {processTextWithLinks(item.content, ventureWebsites)}
+                  {processTextWithLinks(item.content ?? "", ventureWebsites)}
                 </p>
               )}
 
@@ -226,64 +226,64 @@ export default function AboutMeContent({ content }: AboutMeContentProps) {
 }
 
 // Helper function to process text and add links with logos
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+}
+
 function processTextWithLinks(text: string, websites: { name: string; url: string; logo?: string }[]) {
   if (!text) return text
 
-  const processedText = text
+  type Match = { index: number; length: number; site: (typeof websites)[number]; text: string }
+  const matches: Match[] = []
 
-  // Create an array to hold the parts of the text and JSX elements
-  const parts: (string | JSX.Element)[] = []
-  let lastIndex = 0
-
-  // For each website, check if its name appears in the text
   websites.forEach((site) => {
-    const regex = new RegExp(`\\b${site.name}\\b`, "gi")
-    let match
-
-    while ((match = regex.exec(processedText)) !== null) {
-      // Add the text before the match
-      if (match.index > lastIndex) {
-        parts.push(processedText.substring(lastIndex, match.index))
-      }
-
-      // Add the linked website name with logo
-      parts.push(
-        <Link
-          key={`${site.name}-${match.index}`}
-          href={site.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center text-netflix-red hover:underline group relative"
-        >
-          {match[0]}
-          {site.logo && (
-            <span className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <Image
-                src={site.logo || "/placeholder.svg"}
-                alt={`${site.name} logo`}
-                width={16}
-                height={16}
-                className="inline-block"
-              />
-            </span>
-          )}
-        </Link>,
-      )
-
-      lastIndex = match.index + match[0].length
+    const regex = new RegExp(`\\b${escapeRegExp(site.name)}\\b`, "gi")
+    let match: RegExpExecArray | null
+    while ((match = regex.exec(text)) !== null) {
+      matches.push({
+        index: match.index,
+        length: match[0].length,
+        site,
+        text: match[0],
+      })
     }
   })
 
-  // Add any remaining text
-  if (lastIndex < processedText.length) {
-    parts.push(processedText.substring(lastIndex))
-  }
+  if (matches.length === 0) return text
 
-  // If no matches were found, return the original text
-  if (parts.length === 0) {
-    return processedText
-  }
+  matches.sort((a, b) => a.index - b.index || b.length - a.length)
 
-  // Return the array of text and JSX elements
+  const parts: (string | React.ReactElement)[] = []
+  let cursor = 0
+
+  matches.forEach((m, i) => {
+    if (m.index < cursor) return
+    if (m.index > cursor) parts.push(text.slice(cursor, m.index))
+    parts.push(
+      <Link
+        key={`${m.site.name}-${m.index}-${i}`}
+        href={m.site.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center text-netflix-red hover:underline group relative"
+      >
+        {m.text}
+        {m.site.logo && (
+          <span className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Image
+              src={m.site.logo || "/placeholder.svg"}
+              alt={`${m.site.name} logo`}
+              width={16}
+              height={16}
+              className="inline-block"
+            />
+          </span>
+        )}
+      </Link>,
+    )
+    cursor = m.index + m.length
+  })
+
+  if (cursor < text.length) parts.push(text.slice(cursor))
   return <React.Fragment>{parts}</React.Fragment>
 }

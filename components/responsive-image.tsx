@@ -20,6 +20,7 @@ interface ResponsiveImageProps {
   quality?: number
   unoptimized?: boolean
   retryOnError?: boolean
+  onError?: () => void
 }
 
 const ResponsiveImage = ({
@@ -38,6 +39,7 @@ const ResponsiveImage = ({
   quality = 85,
   unoptimized = false,
   retryOnError = false,
+  onError,
 }: ResponsiveImageProps) => {
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -87,10 +89,7 @@ const ResponsiveImage = ({
 
   // Handle error and retry logic
   const handleImageError = () => {
-    console.error(`Image error: ${src}`)
-
     if (retryOnError && retryCount < 2) {
-      // Try again with a short delay
       setTimeout(() => {
         setRetryCount((prev) => prev + 1)
         setIsLoading(true)
@@ -99,6 +98,7 @@ const ResponsiveImage = ({
     } else {
       setHasError(true)
       setIsLoading(false)
+      onError?.()
     }
   }
 
@@ -127,12 +127,9 @@ const ResponsiveImage = ({
         sizes={sizes}
         priority={priority}
         quality={quality}
-        unoptimized={unoptimized || isExternalOrBlobUrl}
+        unoptimized={Boolean(unoptimized || isExternalOrBlobUrl)}
         onError={handleImageError}
-        onLoad={() => {
-          console.log(`Image loaded: ${src}`)
-          setIsLoading(false)
-        }}
+        onLoad={() => setIsLoading(false)}
       />
     </div>
   )

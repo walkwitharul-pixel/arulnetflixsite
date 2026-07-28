@@ -29,6 +29,7 @@ export default function SoundPlayer() {
         if (cancelled) return
         if (res.ok) {
           audio.src = "/sounds/netflix-intro.mp3"
+          audio.muted = true
           audio.addEventListener("play", onPlay)
           audio.addEventListener("pause", onPause)
           audio.addEventListener("ended", onEnded)
@@ -84,7 +85,7 @@ export default function SoundPlayer() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex items-center">
+    <div className="fixed bottom-[calc(var(--nf-tabbar-h)+1rem)] right-4 z-[1001] flex items-center">
       <AnimatePresence>
         {showVolumeControl && (
           <motion.div

@@ -7,10 +7,13 @@ import { projectsData } from "@/lib/projects-data"
 import { FaPlay, FaInfoCircle } from "react-icons/fa"
 import Image from "next/image"
 
-export default function TopPicks({ profile }) {
-  // Filter top 4 projects
+interface TopPicksProps {
+  profile?: string
+}
+
+export default function TopPicks({ profile: _profile }: TopPicksProps) {
   const topProjects = projectsData.slice(0, 4)
-  const [hoveredIndex, setHoveredIndex] = useState(null)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   return (
     <section className="top-picks py-12 bg-black">

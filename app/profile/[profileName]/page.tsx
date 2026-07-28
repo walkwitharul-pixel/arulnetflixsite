@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import Navbar from "@/components/navbar"
 import HeroSection from "@/components/hero-section"
@@ -13,27 +13,29 @@ import { profileData } from "@/lib/profile-data"
 import { mediaVideos, stockPhotos } from "@/lib/personal-data"
 import { getProfileView } from "@/lib/profile-views"
 
+const VALID_PROFILES = ["stalker", "investor", "recruiter", "community", "adventurer"] as const
+
 export default function ProfilePage() {
   const params = useParams()
-  const profileName = String(params.profileName || "")
+  const router = useRouter()
+  const profileName = String(params.profileName || "").toLowerCase()
   const [backgroundGif, setBackgroundGif] = useState("")
   const [isLoading, setIsLoading] = useState(true)
 
-  const validProfileName = ["stalker", "investor", "recruiter", "community", "adventurer"].includes(profileName)
-    ? profileName
-    : "recruiter"
-
-  const view = getProfileView(validProfileName)
-  const featuredVideo = mediaVideos[view.videoIndex] ?? mediaVideos[0]
+  const isValid = (VALID_PROFILES as readonly string[]).includes(profileName)
 
   useEffect(() => {
-    const profile = profileData.find((p) => p.name === validProfileName)
+    if (!isValid) {
+      router.replace("/browse")
+      return
+    }
+    const profile = profileData.find((p) => p.name === profileName)
     setBackgroundGif(profile?.backgroundGif || "")
     const timer = setTimeout(() => setIsLoading(false), 280)
     return () => clearTimeout(timer)
-  }, [validProfileName])
+  }, [profileName, isValid, router])
 
-  if (isLoading) {
+  if (!isValid || isLoading) {
     return (
       <div className="netflix-loader">
         <div className="netflix-loader-logo">
@@ -43,6 +45,9 @@ export default function ProfilePage() {
     )
   }
 
+  const view = getProfileView(profileName)
+  const featuredVideo = mediaVideos[view.videoIndex] ?? mediaVideos[0]
+
   return (
     <>
       <Navbar />
@@ -50,7 +55,7 @@ export default function ProfilePage() {
         <HeroSection
           title={view.title}
           description={view.description}
-          backgroundImage={backgroundGif || `/images/placeholders/hero/${validProfileName}.svg`}
+          backgroundImage={backgroundGif || `/images/placeholders/hero/${profileName}.svg`}
           rating={view.rating}
           genres={view.genres}
           playHref={view.playHref}
@@ -69,13 +74,13 @@ export default function ProfilePage() {
           <section className="nf-gutter mt-4 mb-6">
             <div className="flex items-end justify-between gap-4 mb-3">
               <h2 className="text-[var(--nf-row-title)] font-semibold text-nf-secondary m-0">
-                {validProfileName === "investor"
+                {profileName === "investor"
                   ? "Investor Briefing"
-                  : validProfileName === "recruiter"
+                  : profileName === "recruiter"
                     ? "Candidate Spotlight"
-                    : validProfileName === "community"
+                    : profileName === "community"
                       ? "Community Desk"
-                      : validProfileName === "adventurer"
+                      : profileName === "adventurer"
                         ? "Adventure Trailer"
                         : "Trailers & Videos"}
               </h2>

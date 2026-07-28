@@ -99,9 +99,10 @@ const ImagePreloader: React.FC<ImagePreloaderProps> = ({ additionalImages = [] }
     Promise.all(preloadPromises)
       .then(() => {
         setPreloadedImages((prev) => [...prev, ...newImagesToPreload])
+        console.log(`Preloaded ${newImagesToPreload.length} images for ${pathname}`)
       })
-      .catch(() => {
-        // Never surface Event/unknown rejections to the Next overlay
+      .catch((error) => {
+        console.error("Error preloading images:", error)
       })
   }, [pathname]) // Only re-run when pathname changes
 
@@ -127,8 +128,9 @@ const ImagePreloader: React.FC<ImagePreloaderProps> = ({ additionalImages = [] }
                       ? "image/svg+xml"
                       : src.endsWith(".webp")
                         ? "image/webp"
-                        : undefined
+                        : "image"
               }
+              crossOrigin="anonymous"
             />
           ))}
     </>

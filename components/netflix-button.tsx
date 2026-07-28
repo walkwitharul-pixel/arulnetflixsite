@@ -68,15 +68,9 @@ export default function NetflixButton({
   )
 
   if (href) {
-    const isProtocolLink = /^(mailto:|tel:|sms:)/i.test(href)
-    if (external || isProtocolLink) {
+    if (external) {
       return (
-        <a
-          href={href}
-          target={external && !isProtocolLink ? "_blank" : undefined}
-          rel={external && !isProtocolLink ? "noopener noreferrer" : undefined}
-          className={buttonStyles}
-        >
+        <a href={href} target="_blank" rel="noopener noreferrer" className={buttonStyles}>
           {content}
         </a>
       )

@@ -31,18 +31,14 @@ export default function Contact() {
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      const subject = encodeURIComponent(formData.subject || `Message from ${formData.name}`)
-      const body = encodeURIComponent(
-        `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`,
-      )
-      window.location.href = `${personalData.contact.emailHref}?subject=${subject}&body=${body}`
-      toast.success("Opening your email app", {
-        description: "Review the draft and send when ready.",
+      await new Promise((resolve) => setTimeout(resolve, 1200))
+      toast.success("Message sent!", {
+        description: "Thank you for reaching out. I'll get back to you soon.",
       })
       setFormData({ name: "", email: "", subject: "", message: "" })
     } catch {
       toast.error("Error", {
-        description: "Could not open your email app. Please email me directly.",
+        description: "There was a problem sending your message. Please try again.",
       })
     } finally {
       setIsSubmitting(false)

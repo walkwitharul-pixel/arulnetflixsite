@@ -68,7 +68,7 @@ function buildSearchIndex(): SearchResult[] {
         type: "experience" as const,
         image: resolveThumbnail(t.name),
         description: t.summaryPoints,
-        url: `/work-experience#${slug}-${t.timelineType}`,
+        url: `/work-experience#${slug}`,
       }
     })
 

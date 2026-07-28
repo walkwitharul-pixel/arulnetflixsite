@@ -22,9 +22,9 @@ export default function Skills() {
   const displayedSkills = activeCategory ? skillsByCategory[activeCategory] : skillsData
 
   useEffect(() => {
-    const raw = window.location.hash.replace(/^#/, "")
-    if (!raw) return
-    const el = document.getElementById(decodeURIComponent(raw))
+    const hash = window.location.hash
+    if (!hash) return
+    const el = document.querySelector(hash)
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" })
     }

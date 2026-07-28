@@ -13,15 +13,8 @@ export default function Home() {
   const { preloadImages } = useImagePreloader()
   const hasPreloaded = useRef(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  const skipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const preloadImagesRef = useRef(preloadImages)
-  preloadImagesRef.current = preloadImages
 
   const skipToBrowse = (immediate = false) => {
-    if (skipTimerRef.current) {
-      clearTimeout(skipTimerRef.current)
-      skipTimerRef.current = null
-    }
     if (audioRef.current) {
       audioRef.current.pause()
       audioRef.current = null
@@ -31,34 +24,17 @@ export default function Home() {
       return
     }
     setAnimate(true)
-    skipTimerRef.current = setTimeout(() => {
+    setTimeout(() => {
       router.push("/browse")
     }, 800)
   }
 
   useEffect(() => {
-    let cancelled = false
-    let playTimer: ReturnType<typeof setTimeout> | null = null
-    const redirectTimer = setTimeout(() => {
-      if (!cancelled) skipToBrowse(false)
-    }, 7200)
-
-    // Only play intro audio when the asset exists
-    fetch("/sounds/netflix-intro.mp3", { method: "HEAD" })
-      .then((res) => {
-        if (cancelled || !res.ok) return
-        const audio = new Audio("/sounds/netflix-intro.mp3")
-        audio.volume = 0.5
-        audioRef.current = audio
-        playTimer = setTimeout(() => {
-          if (cancelled || !audioRef.current) return
-          audioRef.current.play().catch(() => {})
-        }, 500)
-      })
-      .catch(() => {})
+    audioRef.current = new Audio("/sounds/netflix-intro.mp3")
+    audioRef.current.volume = 0.5
 
     if (!hasPreloaded.current) {
-      preloadImagesRef.current([
+      preloadImages([
         "/images/profiles/stalker.svg",
         "/images/profiles/investor.svg",
         "/images/profiles/recruiter.svg",
@@ -68,18 +44,25 @@ export default function Home() {
       hasPreloaded.current = true
     }
 
+    setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.play().catch(() => {})
+      }
+    }, 500)
+
+    const redirectTimer = setTimeout(() => {
+      skipToBrowse(false)
+    }, 7200)
+
     return () => {
-      cancelled = true
       clearTimeout(redirectTimer)
-      if (playTimer) clearTimeout(playTimer)
-      if (skipTimerRef.current) clearTimeout(skipTimerRef.current)
       if (audioRef.current) {
         audioRef.current.pause()
         audioRef.current = null
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router])
+  }, [router, preloadImages])
 
   const additionalImages = ["/images/logos/velantec-logo.png"]
 
@@ -107,7 +90,12 @@ export default function Home() {
         transition={{ duration: 0.8 }}
         className="animated-name-wrapper"
       >
-        <AnimatedName name="Arul Murugan" onAnimationComplete={() => {}} />
+        <AnimatedName
+          name="Arul Murugan"
+          onAnimationComplete={() => {
+            // Animation complete callback
+          }}
+        />
       </motion.div>
     </div>
   )

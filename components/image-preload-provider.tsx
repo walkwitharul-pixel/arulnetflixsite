@@ -1,7 +1,8 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState, useEffect, useRef, useCallback, type ReactNode } from "react"
+
+import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from "react"
 import { usePathname } from "next/navigation"
 
 type PreloadStatus = {
@@ -29,88 +30,95 @@ interface PreloadProviderProps {
   criticalImages?: Record<string, string[]>
 }
 
-function matchCriticalPath(pathname: string, paths: string[]): string | undefined {
-  // Prefer longest / most specific prefix; treat "/" as exact-only
-  const ranked = paths
-    .filter((path) => (path === "/" ? pathname === "/" : pathname === path || pathname.startsWith(`${path}/`) || pathname.startsWith(path)))
-    .sort((a, b) => b.length - a.length)
-  return ranked[0]
-}
-
 export const ImagePreloadProvider: React.FC<PreloadProviderProps> = ({ children, criticalImages = {} }) => {
   const pathname = usePathname()
   const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set())
   const [preloadStatus, setPreloadStatus] = useState<PreloadStatus>({})
   const [isLoading, setIsLoading] = useState(false)
+  const isInitialMount = useRef(true)
   const criticalImagesRef = useRef(criticalImages)
-  const preloadedRef = useRef(preloadedImages)
-  const statusRef = useRef(preloadStatus)
 
+  // Update ref when criticalImages changes
   useEffect(() => {
     criticalImagesRef.current = criticalImages
   }, [criticalImages])
 
+  // Preload critical images based on current route
   useEffect(() => {
-    preloadedRef.current = preloadedImages
-  }, [preloadedImages])
+    if (!pathname) return
 
-  useEffect(() => {
-    statusRef.current = preloadStatus
-  }, [preloadStatus])
+    // Skip on initial mount to prevent double loading
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
 
-  const preloadImages = useCallback((urls: string[]) => {
-    if (!urls?.length) return
-
-    const status = statusRef.current
-    const already = preloadedRef.current
-    const newImages = urls.filter(
-      (url) => url && !already.has(url) && status[url] !== "loading" && status[url] !== "loaded",
+    const pagePath = Object.keys(criticalImagesRef.current).find(
+      (path) => pathname.startsWith(path) || pathname === path,
     )
+
+    if (pagePath && criticalImagesRef.current[pagePath]) {
+      preloadImages(criticalImagesRef.current[pagePath])
+    }
+  }, [pathname]) // Only re-run when pathname changes
+
+  const preloadImages = (urls: string[]) => {
+    if (!urls || !urls.length) return
+
+    // Filter out already loaded or loading images and invalid URLs
+    const newImages = urls.filter(
+      (url) => url && !preloadedImages.has(url) && preloadStatus[url] !== "loading" && preloadStatus[url] !== "loaded",
+    )
+
     if (newImages.length === 0) return
 
     setIsLoading(true)
-    setPreloadStatus((prev) => {
-      const next = { ...prev }
-      newImages.forEach((url) => {
-        next[url] = "loading"
-      })
-      return next
-    })
 
+    // Mark images as loading
+    const newStatus = { ...preloadStatus }
     newImages.forEach((url) => {
+      newStatus[url] = "loading"
+    })
+    setPreloadStatus(newStatus)
+
+    // Preload each image
+    newImages.forEach((url) => {
+      if (!url) return
+
       const img = new Image()
+
       img.onload = () => {
-        setPreloadStatus((prev) => {
-          const next = { ...prev, [url]: "loaded" as const }
-          const allDone = Object.values(next).every((s) => s === "loaded" || s === "error")
-          if (allDone) setIsLoading(false)
-          return next
-        })
+        setPreloadStatus((prev) => ({ ...prev, [url]: "loaded" }))
         setPreloadedImages((prev) => {
           const updated = new Set(prev)
           updated.add(url)
           return updated
         })
+
+        // Check if all images are loaded
+        checkAllLoaded(newStatus)
       }
+
       img.onerror = () => {
-        setPreloadStatus((prev) => {
-          const next = { ...prev, [url]: "error" as const }
-          const allDone = Object.values(next).every((s) => s === "loaded" || s === "error")
-          if (allDone) setIsLoading(false)
-          return next
-        })
+        console.warn(`Failed to preload image: ${url}`)
+        setPreloadStatus((prev) => ({ ...prev, [url]: "error" }))
+
+        // Check if all images are loaded or failed
+        checkAllLoaded(newStatus)
       }
+
       img.src = url
     })
-  }, [])
+  }
 
-  useEffect(() => {
-    if (!pathname) return
-    const pagePath = matchCriticalPath(pathname, Object.keys(criticalImagesRef.current))
-    if (pagePath && criticalImagesRef.current[pagePath]) {
-      preloadImages(criticalImagesRef.current[pagePath])
+  // Helper function to check if all images are loaded
+  const checkAllLoaded = (statusObj: PreloadStatus) => {
+    const allLoaded = Object.values(statusObj).every((status) => status === "loaded" || status === "error")
+
+    if (allLoaded) {
+      setIsLoading(false)
     }
-  }, [pathname, preloadImages])
+  }
 
   return (
     <PreloadContext.Provider

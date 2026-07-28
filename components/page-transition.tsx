@@ -1,6 +1,6 @@
 "use client"
 
-import { motion, AnimatePresence, type Variants } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { usePathname } from "next/navigation"
 import { type ReactNode, useEffect, useState } from "react"
 
@@ -8,17 +8,16 @@ interface PageTransitionProps {
   children: ReactNode
 }
 
-const easeOutSoft = [0.25, 0.1, 0.25, 1.0] as const
-
 export default function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname()
   const [isFirstRender, setIsFirstRender] = useState(true)
 
   useEffect(() => {
+    // Skip animation on first render
     setIsFirstRender(false)
   }, [])
 
-  const variants: Variants = {
+  const variants = {
     hidden: {
       opacity: 0,
     },
@@ -26,14 +25,14 @@ export default function PageTransition({ children }: PageTransitionProps) {
       opacity: 1,
       transition: {
         duration: 0.35,
-        ease: easeOutSoft,
+        ease: [0.25, 0.1, 0.25, 1.0],
       },
     },
     exit: {
       opacity: 0,
       transition: {
         duration: 0.2,
-        ease: easeOutSoft,
+        ease: [0.25, 0.1, 0.25, 1.0],
       },
     },
   }

@@ -20,7 +20,7 @@ export default function ImageVerifier({ imagePaths }: ImageVerifierProps) {
         }),
       )
 
-      const resultsMap = checks.reduce<Record<string, boolean>>((acc, { path, exists }) => {
+      const resultsMap = checks.reduce((acc, { path, exists }) => {
         acc[path] = exists
         return acc
       }, {})

@@ -2,9 +2,9 @@
 
 import Link from "next/link"
 import { personalData } from "@/lib/personal-data"
-import { useProfile } from "@/context/profile-context"
 
 const footerLinks = [
+  { name: "Home", href: "/browse" },
   { name: "Ventures", href: "/projects" },
   { name: "Skills", href: "/skills" },
   { name: "Experience", href: "/work-experience" },
@@ -16,9 +16,6 @@ const footerLinks = [
 ]
 
 export default function SiteFooter() {
-  const { activeProfile } = useProfile()
-  const homeHref = activeProfile ? `/profile/${activeProfile}` : "/browse"
-
   return (
     <footer className="bg-nf-bg border-t border-[color:var(--nf-border)] mt-auto">
       <div className="nf-gutter py-8 sm:py-10">
@@ -26,9 +23,6 @@ export default function SiteFooter() {
         <p className="text-nf-dim text-sm mb-6 max-w-xl">{personalData.tagline}</p>
 
         <div className="flex flex-wrap gap-x-5 gap-y-2 mb-6 max-w-3xl">
-          <Link href={homeHref} className="text-nf-dim hover:text-nf-text text-sm transition-colors">
-            Home
-          </Link>
           {footerLinks.map((link) => (
             <Link
               key={link.href}

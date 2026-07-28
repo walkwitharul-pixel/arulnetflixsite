@@ -113,11 +113,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
             </button>
 
             <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                handlePrevImage()
-              }}
+              onClick={handlePrevImage}
               className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-netflix-red transition-colors"
               aria-label="Previous image"
             >
@@ -138,11 +134,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
             </div>
 
             <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                handleNextImage()
-              }}
+              onClick={handleNextImage}
               className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-netflix-red transition-colors"
               aria-label="Next image"
             >

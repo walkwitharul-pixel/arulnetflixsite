@@ -23,12 +23,12 @@ export default function ProfileImageGenerator({ profileType, size = 150 }: Profi
     ctx.clearRect(0, 0, size, size)
 
     // Set background color based on profile type
-    const colors: Record<string, string> = {
-      stalker: "#3B9EFF",
-      investor: "#0077B5",
-      recruiter: "#6441A4",
-      community: "#FF9900",
-      adventurer: "#1DB954",
+    const colors = {
+      stalker: "#3B9EFF", // Netflix red
+      investor: "#0077B5", // LinkedIn blue
+      recruiter: "#6441A4", // Twitch purple
+      community: "#FF9900", // Amazon orange
+      adventurer: "#1DB954", // Spotify green
     }
 
     const backgroundColor = colors[profileType.toLowerCase()] || "#3B9EFF"

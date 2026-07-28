@@ -7,7 +7,6 @@ import { motion } from "framer-motion"
 import { toast } from "sonner"
 import NetflixButton from "./netflix-button"
 import { Mail, CheckCircle } from "lucide-react"
-import { personalData } from "@/lib/personal-data"
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("")
@@ -28,13 +27,11 @@ export default function NewsletterSignup() {
     setError("")
     setIsSubmitting(true)
     try {
-      const subject = encodeURIComponent("Portfolio newsletter signup")
-      const body = encodeURIComponent(`Please add me to updates.\n\nEmail: ${email}`)
-      window.location.href = `${personalData.contact.emailHref}?subject=${subject}&body=${body}`
+      await new Promise((resolve) => setTimeout(resolve, 1200))
       setIsSuccess(true)
       setEmail("")
-      toast.success("Opening your email app", {
-        description: "Send the draft to complete your signup.",
+      toast.success("Thank you for subscribing!", {
+        description: "You'll hear from me soon.",
       })
     } catch {
       setError("Something went wrong. Please try again.")

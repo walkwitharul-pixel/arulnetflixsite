@@ -1,32 +1,26 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
 import ImagePreloader from "@/components/image-preloader"
 import { useImagePreloader } from "@/components/image-preload-provider"
 import AnimatedName from "@/components/animated-name"
 
 export default function Home() {
-  const [animate, setAnimate] = useState(false)
   const router = useRouter()
   const { preloadImages } = useImagePreloader()
   const hasPreloaded = useRef(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const navigatedRef = useRef(false)
 
-  const skipToBrowse = (immediate = false) => {
+  const goToBrowse = () => {
+    if (navigatedRef.current) return
+    navigatedRef.current = true
     if (audioRef.current) {
       audioRef.current.pause()
       audioRef.current = null
     }
-    if (immediate) {
-      router.push("/browse")
-      return
-    }
-    setAnimate(true)
-    setTimeout(() => {
-      router.push("/browse")
-    }, 800)
+    router.push("/browse")
   }
 
   useEffect(() => {
@@ -44,18 +38,16 @@ export default function Home() {
       hasPreloaded.current = true
     }
 
-    setTimeout(() => {
-      if (audioRef.current) {
-        audioRef.current.play().catch(() => {})
-      }
+    const playTimer = window.setTimeout(() => {
+      audioRef.current?.play().catch(() => {})
     }, 500)
 
-    const redirectTimer = setTimeout(() => {
-      skipToBrowse(false)
-    }, 7200)
+    // Safety redirect if animation callback never fires
+    const fallbackTimer = window.setTimeout(goToBrowse, 9000)
 
     return () => {
-      clearTimeout(redirectTimer)
+      window.clearTimeout(playTimer)
+      window.clearTimeout(fallbackTimer)
       if (audioRef.current) {
         audioRef.current.pause()
         audioRef.current = null
@@ -67,36 +59,12 @@ export default function Home() {
   const additionalImages = ["/images/logos/velantec-logo.png"]
 
   return (
-    <div
-      className="netflix-container relative flex items-center justify-center h-screen bg-black overflow-hidden"
-      onClick={() => skipToBrowse(true)}
-    >
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation()
-          skipToBrowse(true)
-        }}
-        className="absolute top-6 right-6 z-20 px-5 py-2 text-sm font-medium text-white border border-white/80 rounded-[2px] hover:bg-white/10 transition-colors"
-      >
-        Skip Intro
-      </button>
-
+    <div className="netflix-container relative flex items-center justify-center h-screen bg-black overflow-hidden">
       <ImagePreloader additionalImages={additionalImages} />
 
-      <motion.div
-        initial={{ opacity: 1 }}
-        animate={{ opacity: animate ? 0 : 1 }}
-        transition={{ duration: 0.8 }}
-        className="animated-name-wrapper"
-      >
-        <AnimatedName
-          name="Arul Murugan"
-          onAnimationComplete={() => {
-            // Animation complete callback
-          }}
-        />
-      </motion.div>
+      <div className="animated-name-wrapper">
+        <AnimatedName name="Arul Murugan" onAnimationComplete={goToBrowse} />
+      </div>
     </div>
   )
 }

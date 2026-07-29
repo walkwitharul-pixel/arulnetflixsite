@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Outfit } from "next/font/google"
+import { Outfit, Bebas_Neue } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import ImagePreloadProvider from "@/components/image-preload-provider"
@@ -15,6 +15,14 @@ const netflixSans = Outfit({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-netflix-sans",
+  display: "swap",
+})
+
+/** Tall condensed display — Graphique-style intro letters (open alternative) */
+const graphiqueDisplay = Bebas_Neue({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-graphique",
   display: "swap",
 })
 
@@ -57,7 +65,7 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
       </head>
-      <body className={`${netflixSans.variable} font-netflix antialiased`}>
+      <body className={`${netflixSans.variable} ${graphiqueDisplay.variable} font-netflix antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
